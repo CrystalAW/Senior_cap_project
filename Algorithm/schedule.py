@@ -35,21 +35,21 @@ class Schedule:
     def getDays(self):
         return self.__days
     
-    #TODO: Add tests
     #add an event to a specific day of the month
     # days will be indexed from 0 to last day of the month-1
     def addEvent(self, day, event):
         #The List for the day at index "day"
-        dayList = self.__days[day]
-        if (dayList is None):
-            dayList = [event]
+        self.__days[day]
+        if (self.__days[day] is None):
+            self.__days[day] = [event]
             return
         #events are entered in chronolgical order
-        for i in range(0, len(dayList) - 1):
-            if ~(event.isAfter(dayList[i])):
-                if event.overlaps(dayList[i]):
+        for i in range(0, len(self.__days[day])):
+            if not(event.isAfter(self.__days[day][i])):
+                if event.overlaps(self.__days[day][i]):
                     #Implementing overlap will change
-                    print(f"There is a scheduling conflict with {dayList[i].getName()}.")
+                    print(f"There is a scheduling conflict with {self.__days[day][i].getName()}.")
                 else:
-                    dayList.insert(i, event)
+                    self.__days[day].insert(i, event)
                 return
+        self.__days[day].append(event)

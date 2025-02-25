@@ -56,7 +56,7 @@ class Event:
     def isAfter(self, event):
         startSelf = Event.time_to_minutes(self.__startTime)
         endEvent = Event.time_to_minutes(event.getEndTime())
-        return startSelf > endEvent
+        return (startSelf > endEvent)
     
     def overlaps(self, event):
         #checking if self event is overlapping at the start and at the end
