@@ -11,6 +11,9 @@ class Schedule:
     #month as int
     __month = None 
     __year = None
+    #days is in the form of a tuple where:
+    #[0] is ths list of events
+    #[1] is the list of tasks
     __days = None
     
     def __init__(self, month, year):
@@ -18,12 +21,12 @@ class Schedule:
         self.__year = year
         if (month == 2):
             if ((year % 4 == 0)):
-                self.__days = [None] * 29
-            self.__days = [None] * 28
+                self.__days = ([None] * 29, [None] * 29)
+            self.__days = ([None] * 28, [None] * 28)
         elif (month == 4 or month == 6 or month == 9 or month == 11):
-            self.__days = [None] * 30
+            self.__days = ([None] * 30, [None] * 30)
         else:
-            self.__days = [None] * 31
+            self.__days = ([None] * 31, [None] * 31)
 
     #accessors
     def getMonth(self):
@@ -34,22 +37,36 @@ class Schedule:
     
     def getDays(self):
         return self.__days
-    
+
     #add an event to a specific day of the month
-    # days will be indexed from 0 to last day of the month-1
+    #days will be indexed from 0 to last day of the month-1
     def addEvent(self, day, event):
+        #if event is a task, it goes into the tasks list
+        if(event.isTask()):
+            if(self.__days[1][day] is None):
+                self.__days[1][day] = [event]
+            else:
+                self.__days[1][day].append(event)
+            return
+
         #The List for the day at index "day"
-        self.__days[day]
-        if (self.__days[day] is None):
-            self.__days[day] = [event]
+        if (self.__days[0][day] is None):
+            self.__days[0][day] = [event]
             return
         #events are entered in chronolgical order
-        for i in range(0, len(self.__days[day])):
-            if not(event.isAfter(self.__days[day][i])):
-                if event.overlaps(self.__days[day][i]):
+        for i in range(0, len(self.__days[0][day])):
+            if not(event.isAfter(self.__days[0][day][i])):
+                if event.overlaps(self.__days[0][day][i]):
                     #Implementing overlap will change
-                    print(f"There is a scheduling conflict with {self.__days[day][i].getName()}.")
+                    print(f"There is a scheduling conflict with {self.__days[0][day][i].getName()}.")
                 else:
-                    self.__days[day].insert(i, event)
+                    self.__days[0][day].insert(i, event)
                 return
-        self.__days[day].append(event)
+        self.__days[0][day].append(event)
+
+    #Remove an event from a specific day in the schedule
+    #this implementation looks for the object
+    #assumes: list is not empty at "day", event occurs that day.
+    #isTask is an int either 0 (event) or 1 (task)
+    def removeEvent(self, day, event, isTask):
+        self.__days[isTask][day].remove(event)
