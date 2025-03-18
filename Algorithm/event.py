@@ -45,14 +45,18 @@ class Event:
     def isTask(self):
         return self.__startTime is None
     
-    #Untested functions:
     #comparisons
     @staticmethod
     def time_to_minutes(time_tuple):
         return time_tuple[0] * 60 + time_tuple[1]
+    
+    #abs only for task to event
+    @staticmethod
+    def minutes_to_time(minutes):
+        return (int(minutes/60), abs(minutes) % 60)
+        
 
     #is the parameter "event" begining after this one ends
-    #TODO: implement time_to_minutes later
     def isAfter(self, event):
         startSelf = Event.time_to_minutes(self.__startTime)
         endEvent = Event.time_to_minutes(event.getEndTime())
@@ -67,6 +71,19 @@ class Event:
 
         # Two events overlap if the start of one is before the end of the other and vice versa.
         return startSelf < endEvent and startEvent < endSelf
+    
+    #untested:
+    #create an event out of a task
+    #estimated duration (in minutes) is subtracted from 0, end time is 0
+    def taskToEvent(self, duration):
+        self.__startTime = (0,0)
+        self.__endTime = Event.minutes_to_time(duration)
+
+    #offset is a tuple
+    def offSetTimes(self, offset):
+        ttmOffset = self.time_to_minutes(offset)
+        self.__startTime = (self.__startTime[0] + int(ttmOffset / 60), self.__startTime[1] + (ttmOffset % 60)) 
+        self.__endTime = (self.__endTime[0] + int(ttmOffset / 60), self.__endTime[1] + (ttmOffset % 60))
 
         
     #printString (this is already tested)
