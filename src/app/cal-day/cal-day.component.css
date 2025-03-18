@@ -1,0 +1,29 @@
+/* General table styling */
+table {
+    width: 100%; /* Ensure the table takes up the full width */
+    border: 2px solid black !important;
+    /* border-collapse: collapse; Ensure borders collapse properly */
+}
+
+/* Styling for table headers */
+thead, th {
+    border: 1px solid black !important; /* Apply border to headers */
+    padding: 8px; /* Add some padding for readability */
+    background-color: #f2f2f2; /* Optional: Add a background color for headers */
+}
+
+/* Styling for table cells */
+ #week-table td {
+    border: 4px solid black !important; /* Apply border to cells */
+    padding: 8px; /* Add some padding for readability */
+    text-align: center; /* Center-align text in cells */
+    background-color: aquamarine;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9; /* Optional: Alternate row colors */
+}
+
+tr:hover {
+    background-color: #f1f1f1; /* Optional: Highlight rows on hover */
+}
