@@ -1,0 +1,66 @@
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table, th, td {
+    border: 4px groove #8A6851;
+    border-radius: 16px;
+    padding: 10px;
+    margin-bottom: 5px;
+    clear: left;
+}
+
+th {
+    height: 50px;
+    text-align: center;
+}
+
+td {
+    height: 70px;
+    text-align: center;
+    border-width: 2px;
+    padding: 21px;
+}
+
+#month-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 50px;
+    margin-bottom: 10px;
+}
+
+ button {
+    display: inline-block;
+    padding: 10px;
+ }
+
+ h1 {
+    margin: 0;
+ }
+
+ button.mat-raised-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: red;
+ }
+
+.dates {
+    background-color: black;
+}
+#month-name {
+    text-align: center;
+}
+.inactive {
+    color: gray;
+}
+
+.active {
+    color: black;
+}
+
+.isToday {
+     text-shadow: 1px 1px black;
+     color:blue;
+}

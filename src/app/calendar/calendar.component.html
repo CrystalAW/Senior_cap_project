@@ -1,0 +1,22 @@
+
+<hr>
+    <div id="month-container">
+        <button mat-raised-button (click)="prev()">&laquo;</button><h1 id="month-name">{{monthName}}</h1><button mat-raised-button (click)="next()">&raquo;</button>
+    </div>
+    <table>
+        <thead>
+            <th>SUN</th>
+            <th>MON</th>
+            <th>TUE</th>
+            <th>WED</th>
+            <th>THU</th>
+            <th>FRI</th>
+            <th>SAT</th>
+        </thead>
+        <tbody>
+            <tr *ngFor="let week of dates">
+                <td *ngFor="let day of week" [ngClass]="{'active': day.active, 'inactive': !day.active, 'isToday' : day.day === today}">{{day.day}}</td>
+            </tr>
+        </tbody>
+        <!--i need to find a way to make sure my script doesn't load before the page-->
+    </table>

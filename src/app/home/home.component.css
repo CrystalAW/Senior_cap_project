@@ -1,0 +1,22 @@
+h2 {
+    /* float: left; */
+    border: 2px solid black;
+    box-shadow: 5px 5px 5px burlywood;
+    width:auto;
+    padding: 15px;
+    margin-bottom: 40px;;
+    
+}
+
+h2:hover {
+    background-color: blanchedalmond;
+}
+
+img {
+   width:min-content;
+}
+
+#menu {
+    /* display: flex;
+    gap: 100px; */
+}
