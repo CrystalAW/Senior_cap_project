@@ -1,93 +1,109 @@
-from event import Event
-from schedule import Schedule
+#built off of the quick start file
 
-def test_event():
-    print("\n==== Testing Event Class ====")
-    
-    # Create events and tasks
-    e1 = Event("Meeting", "Project discussion", (9, 0), (10, 0))
-    e2 = Event("Standup", "Daily sync", (9, 30), (10, 30))
-    e3 = Event("Lunch", "Break", (12, 0), (13, 0))
-    t1 = Event("Submit Report")  # Task with no start time
+import datetime
+import os.path
+from eventFunction import *
+from taskFunction import *
 
-    # Print events and test overlap/isAfter
-    for e in [e1, e2, e3, t1]:
-        print(e)
+from datetime import datetime, timedelta
 
-    print(f"Overlap (Meeting & Standup): {e1.overlaps(e2)}")  # True
-    print(f"Overlap (Meeting & Lunch): {e1.overlaps(e3)}")    # False
-    print(f"Is After (Standup after Meeting): {e2.isAfter(e1)}")  # True
-    print(f"Is After (Meeting after Lunch): {e1.isAfter(e3)}")    # False
-    print(f"Is '{t1.getName()}' a task? {t1.isTask()}")           # True
+from google.auth.transport.requests import Request
+from google.oauth2.credentials import Credentials
+from google_auth_oauthlib.flow import InstalledAppFlow
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
 
-def test_schedule():
-    print("\n==== Testing Schedule Class ====")
-
-    schedule = Schedule(3, 2023)
-    print(f"Created Schedule for {schedule.getMonth()}/{schedule.getYear()}")
-
-    # Create events and tasks
-    e1 = Event("Workshop", "Training", (10, 0), (11, 30))
-    e2 = Event("Lunch", "Break", (12, 0), (13, 0))
-    t1 = Event("Submit Report")  # Task with no time
-
-    # Add events and tasks to March 2nd (index 1)
-    schedule.addEvent(1, e1)
-    schedule.addEvent(1, e2)
-    schedule.addEvent(1, t1)
-
-    # Print schedule for March 2nd
-    day_events, day_tasks = schedule.getDays()[0][1], schedule.getDays()[1][1]
-    
-    print("\nEvents on March 2nd:")
-    if day_events:
-        for event in day_events:
-            print(event)
-    
-    print("\nTasks on March 2nd:")
-    if day_tasks:
-        for task in day_tasks:
-            print(task)
-
-    # Test scheduling conflict
-    e_conflict = Event("Overlapping Meeting", "Conflict test", (10, 30), (11, 30))
-    print("\nAdding conflicting event...")
-    schedule.addEvent(1, e_conflict)  # Should trigger a scheduling conflict
-
-def test_remove_event():
-    print("\n==== Testing Remove Event Function ====")
-
-    schedule = Schedule(5, 2023)
-    e1 = Event("Workshop", "Training", (10, 0), (12, 0))
-    e2 = Event("Lunch", "Break", (12, 30), (13, 30))
-    
-    # Add to May 10th (index 9)
-    schedule.addEvent(9, e1)
-    schedule.addEvent(9, e2)
-
-    print("\nEvents on May 10th before removal:")
-    for event in schedule.getDays()[0][9] or []:
-        print(event)
-
-    # Remove event
-    print("\nRemoving 'Lunch' event...")
-    schedule.removeEvent(9, e2, 0)
-
-    print("\nEvents on May 10th after removal:")
-    for event in schedule.getDays()[0][9] or []:
-        print(event)
-
-    # Attempt to remove a non-existent event
-    try:
-        print("\nTrying to remove an event that isn't scheduled...")
-        schedule.removeEvent(9, Event("Nonexistent", "Fake event", (14, 0), (15, 0)), 0)
-    except ValueError:
-        print("Error: Attempted to remove an event that does not exist.")
+# If modifying these scopes, delete the file token.json.
+SCOPES = ["https://www.googleapis.com/auth/calendar", 'https://www.googleapis.com/auth/tasks']
 
 def main():
-    test_event()
-    test_schedule()
-    test_remove_event()
+  """Shows basic usage of the Google Calendar API.
+  Prints the start and name of the next 10 events on the user's calendar.
+  """
+  creds = None
+  # The file token.json stores the user's access and refresh tokens, and is
+  # created automatically when the authorization flow completes for the first
+  # time.
+  if os.path.exists("token.json"):
+    creds = Credentials.from_authorized_user_file("token.json", SCOPES)
+  # If there are no (valid) credentials available, let the user log in.
+  if not creds or not creds.valid:
+    if creds and creds.expired and creds.refresh_token:
+      creds.refresh(Request())
+    else:
+      flow = InstalledAppFlow.from_client_secrets_file(
+          "credentials.json", SCOPES
+      )
+      creds = flow.run_local_server(port=0)
+    # Save the credentials for the next run
+    with open("token.json", "w") as token:
+      token.write(creds.to_json())
+#Do not change above here
+
+  try:
+    event_service = build("calendar", "v3", credentials=creds)
+    task_service = build('tasks', 'v1', credentials=creds)
+    #Start of test: create a Task with time associated and create an event with time blocked out
+    #'''
+    #Create the task
+    title = "Finish Capstone Write-up"
+    notes = "Final draft due tomorrow!"
+    due = datetime.utcnow() + timedelta(days=1)
+    due_iso = due.isoformat("T") + "Z"
+    task = createTask(title, notes, due_iso)
+    task = task_service.tasks().insert(tasklist= '@default', body=task).execute()
+    print ('Task created: %s' % (task['id']))
+    #create a new task with the time breakdown
+    tb = createTaskBreakdown(task, 3)
+    tb = task_service.tasks().insert(tasklist= '@default', body=tb).execute()
+    print ('Task created: %s' % (tb['id']))
+    #now make a new event from this task
+    eventFromTask = createEventFromTask(tb, 1, '2025-04-28T09:00:00-07:00', 'America/New_York')
+    eventFromTask = event_service.events().insert(calendarId='primary', body=eventFromTask).execute()
+    #update the taskBreakdown
+    tb = task_service.tasks().update(tasklist='@default', task=tb['id'], body = tb).execute()
+    print ('Event created: %s' % (eventFromTask.get('htmlLink')))
+    #'''
+    #End of test: create a Task with time associated and create an event with time blocked out
+    #Do not change below here
+  except HttpError as error:
+    print(f"An error occurred: {error}")
+
+#A function that takes arguments to create an Event
+#This is a very simple example, but this is only the start
 
 if __name__ == "__main__":
-    main()
+  main()
+
+#tests to copy/paste into main
+#my test: add event
+
+'''
+startTime = '2026-05-28T09:00:00-07:00'
+endTime = '2026-05-28T17:00:00-07:00'
+event = createEvent('My Event', 'Anne-Belk Hall', 'class time', startTime, endTime, 'America/New_York')
+event = event_service.events().insert(calendarId='primary', body=event).execute()
+print ('Event created: %s' % (event.get('htmlLink')))
+'''
+#my test: add a task
+'''
+title = "Finish Capstone Write-up"
+notes = "Final draft due tomorrow!"
+due = datetime.utcnow() + timedelta(days=1)
+due_iso = due.isoformat("T") + "Z"
+task = createTask(title, notes, due_iso)
+task = task_service.tasks().insert(tasklist= '@default', body=task).execute()
+print ('Task created: %s' % (task.get('htmlLink')))
+#Running for calendar lists:
+'''
+#list all events
+'''
+page_token = None
+while True:
+  calendar_list = service.calendarList().list(pageToken=page_token).execute()
+  for calendar_list_entry in calendar_list['items']:
+    print(calendar_list_entry['summary'])
+  page_token = calendar_list.get('nextPageToken')
+  if not page_token:
+    break
+'''
