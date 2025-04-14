@@ -5,8 +5,6 @@ import os.path
 from eventFunction import *
 from taskFunction import *
 
-from datetime import datetime, timedelta
-
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -48,7 +46,7 @@ def main():
     #Create the task
     title = "Finish Capstone Write-up"
     notes = "Final draft due tomorrow!"
-    due = datetime.utcnow() + timedelta(days=1)
+    due = datetime.datetime.utcnow() + datetime.timedelta(days=1)
     due_iso = due.isoformat("T") + "Z"
     task = createTask(title, notes, due_iso)
     task = task_service.tasks().insert(tasklist= '@default', body=task).execute()
@@ -106,4 +104,13 @@ while True:
   page_token = calendar_list.get('nextPageToken')
   if not page_token:
     break
+'''
+
+'''
+now = datetime.datetime.now(tz=datetime.timezone.utc)
+tomorrow_end = (now + datetime.timedelta(days=1)).replace(hour=23, minute=59, second=59)
+time_min = now.isoformat()
+time_max = tomorrow_end.isoformat()
+
+getEvents(event_service, time_max)
 '''

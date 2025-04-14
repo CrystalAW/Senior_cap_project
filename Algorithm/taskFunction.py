@@ -27,6 +27,5 @@ def createTaskBreakdown(task, hours):
         'due' : task['due']
     }
     return newTask
-
     
 
