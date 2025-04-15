@@ -11,6 +11,7 @@ export class GoogleCalendarService {
   constructor(private http: HttpClient) { }
 
   getEvents(): Observable<any> {
+    // check in this file if there are recurring events and add a tag to them
     return this.http.get<any>(this.apiUrl);
   }
 

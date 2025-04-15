@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import {MatSidenav} from '@angular/material/sidenav';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-header',
@@ -6,12 +8,9 @@ import { Component } from '@angular/core';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent {
-   /* this function changes the display value of the profile/account */ 
-   settings = document.getElementById("settings");
-   hidden = false;
- showSettings() {
-  if (this.settings) {
-    this.settings.hidden = !this.hidden;
+  constructor(private router: Router) {}
+
+  navigateTo(route: string): void {
+    this.router.navigate([route]);
   }
-}
 }

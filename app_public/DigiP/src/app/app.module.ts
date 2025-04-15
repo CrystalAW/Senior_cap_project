@@ -14,6 +14,8 @@ import { TasklistComponent } from './tasklist/tasklist.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { RouterModule } from '@angular/router';
 
 @NgModule({
   declarations: [
@@ -29,6 +31,8 @@ import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
     AppRoutingModule,
     BrowserAnimationsModule,
     MatIconModule,
+    MatSidenavModule,
+    RouterModule,
     NgbModule,
     FormsModule,
     HttpClientModule,
