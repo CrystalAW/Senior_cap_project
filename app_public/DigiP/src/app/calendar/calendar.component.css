@@ -1,0 +1,77 @@
+:host {
+    display: block;
+    background-color: white;
+    padding: 1rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  .calendar-controls {
+    margin-bottom: 1rem;
+  }
+  
+  .today-btn {
+    margin-bottom: 0.5rem;
+  }
+  
+  .calendar-nav h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 500;
+  }
+  
+  .btn {
+    border-radius: 5px;
+    background-color: bisque;
+    color: black;
+  }
+  
+  .mwl-calendar-month-view,
+  .mwl-calendar-week-view,
+  .mwl-calendar-day-view {
+    background-color: rgba(255, 235, 205, 0.2); /* Transparent burlywood */
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: none;
+  }
+  
+  /* Remove borders and adjust fonts for minimalism */
+  td, th {
+    border: none !important;
+  }
+  
+  .mwl-calendar-week-view .cal-day-headers,
+  .mwl-calendar-month-view .cal-day-headers {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
+  
+  .cal-event-title {
+    font-size: 0.85rem;
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+  }
+  
+  .add-event-box {
+    background-color: rgba(222, 184, 135, 0.95); /* burlywood, slightly transparent */
+    padding: 1rem;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    max-width: 300px;
+    margin: 1rem auto;
+    font-family: sans-serif;
+    text-align: center;
+  }
+  
+  .event-input {
+    width: 100%;
+    padding: 0.4rem;
+    margin: 0.5rem 0;
+    border: 1px solid #a37c4d;
+    border-radius: 5px;
+    font-size: 0.95rem;
+  }
+  
+  .event-box-buttons {
+    display: flex;
+    justify-content: space-between;
+  }
+  

@@ -1,0 +1,80 @@
+[33mcommit a699bf030d33d2c44781034bae9177651d430a34[m[33m ([m[1;36mHEAD -> [m[1;32mfrontend[m[33m)[m
+Author: CrystalAW <wrightca5@appstate.edu>
+Date:   Mon Apr 14 20:06:58 2025 -0400
+
+    removed sensitive files
+
+[33mcommit c65b2edcde8760808d4030711cf109f3a0547f79[m
+Author: CrystalAW <wrightca5@appstate.edu>
+Date:   Tue Apr 8 04:04:50 2025 -0400
+
+    fully incorportating calendar api and using it across the website
+
+[33mcommit 560e8961bf3e3b8e4cea9e841d3585f832b5e1eb[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m
+Merge: 2a39fb5 852bb99
+Author: CrystalAW <wrightca5@appstate.edu>
+Date:   Tue Mar 18 15:36:46 2025 -0400
+
+    Merge branch 'main' of https://github.com/CrystalAW/Senior_cap_project
+
+[33mcommit 2a39fb5d3aa14abd584bcf0c6d08d583d9111990[m
+Author: CrystalAW <wrightca5@appstate.edu>
+Date:   Tue Mar 18 15:36:32 2025 -0400
+
+    pushing angular basics
+
+[33mcommit 852bb9920a3a8d681587622bff21446c8b27d2c8[m
+Merge: de89d47 e6c3923
+Author: Thomas Hudson <hudsontm@appstate.edu>
+Date:   Tue Mar 18 15:13:20 2025 -0400
+
+    Merge branch 'main' of https://github.com/CrystalAW/Senior_cap_project
+    Integrating changes from Front end side, all in seperate folder
+
+[33mcommit de89d4780608ca1a4db18167634350c296fe664f[m
+Author: Thomas Hudson <hudsontm@appstate.edu>
+Date:   Tue Mar 18 15:12:55 2025 -0400
+
+    test_schedule now passes all tests
+
+[33mcommit e6c3923add77290fe02c27673d0de57c64b8633b[m
+Author: CrystalAW <wrightca5@appstate.edu>
+Date:   Tue Mar 18 14:46:32 2025 -0400
+
+    pushing the skeletal frontend
+
+[33mcommit 9e1a714af898dfcb931d4f58261fb6989d5d273a[m
+Author: Thomas Hudson <hudsontm@appstate.edu>
+Date:   Tue Mar 4 14:20:01 2025 -0500
+
+    main file (testing).
+
+[33mcommit e21d27464b62c2561dae53c6d1996a7ca742cad7[m
+Author: Thomas Hudson <hudsontm@appstate.edu>
+Date:   Tue Feb 25 15:45:13 2025 -0500
+
+    files ready to begin the algoritm implementation
+
+[33mcommit 042f47074222ac0361b6f552d71f2de3e54e1e81[m
+Author: Thomas Hudson <hudsontm@appstate.edu>
+Date:   Tue Feb 25 14:55:09 2025 -0500
+
+    events can be added to the schedule and there is a check for an overlap, currently not allowing override
+
+[33mcommit fdc45d1de29b4a3b1865bbaee311de1dc436890f[m
+Author: Thomas Hudson <hudsontm@appstate.edu>
+Date:   Tue Feb 25 13:47:22 2025 -0500
+
+    Event class works at its as intended, Schedule base works but new functions involved with addEvent need tuning
+
+[33mcommit d495627d819f3bd359eddaf832f43faa80fefc60[m
+Author: Thomas Hudson <hudsontm@appstate.edu>
+Date:   Tue Jan 21 14:24:32 2025 -0500
+
+    first commit with first.txt
+
+[33mcommit 8c113dbc7a408c786e9637cd5d5bfcd33daef612[m
+Author: CrystalWright <wrightca5@appstate.edu>
+Date:   Tue Jan 21 14:14:11 2025 -0500
+
+    Initial commit

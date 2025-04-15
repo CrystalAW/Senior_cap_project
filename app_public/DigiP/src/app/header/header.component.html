@@ -1,0 +1,34 @@
+<header>
+    <!-- <button id="back-btn"><a href="">Home</a></button> -->
+     <button mat-mini-fab aria-label="menu icon" id="menu">
+        <mat-icon>menu</mat-icon>
+    </button>
+    <div id="title"><h2>Digital Calendar</h2></div>
+    <!-- I might remove this from the header -->
+    <div id="view-dropdown" ngbDropdown #myDrop="ngbDropdown">
+        <button type="button" class="btn btn-outline-primary me-2" id="dpManual" ngbDropdownAnchor (focus)="myDrop.open()">Views</button>
+        <div ngbDropdownMenu aria-labelledby="dpManual">
+             <button ngbDropdownItem><a href="/calendar">Calendar</a></button>
+             <button ngbDropdownItem><a href="/schedule">Schedule</a></button>
+             <button ngbDropdownItem><a href="/tasks">Tasks</a></button>
+        </div>
+     </div>
+    <div id="profile" >
+        <button onclick="showSettings()"><img src="assets/images/profile.png"></button>
+        <select id="settings" hidden>
+            <!-- This can display a dropdown of username greeting, maybe nothing else?  -->
+            <option>Account Details</option>
+            <option>Logout</option>
+        </select>
+
+        <!-- <div id="col-menu">
+            <mat-sidenav>
+                <button>Profile</button>
+                <button>Calendar</button>
+                <button>Schedule</button>
+            </mat-sidenav>
+        </div> -->
+    </div>
+    <hr>
+</header>
+<br>
