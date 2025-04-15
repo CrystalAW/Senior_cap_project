@@ -1,22 +1,68 @@
-h2 {
-    /* float: left; */
-    border: 2px solid black;
-    box-shadow: 5px 5px 5px burlywood;
-    width:auto;
-    padding: 15px;
-    margin-bottom: 40px;;
-    
-}
 
-h2:hover {
-    background-color: blanchedalmond;
-}
-
-img {
-   width:min-content;
-}
-
+/* Container for the menu section */
 #menu {
-    /* display: flex;
-    gap: 100px; */
-}
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+    padding: 0 20px;
+  }
+  
+  /* Style for each card */
+  .menu-card {
+    background-color: #f7f7f7;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    text-align: center;
+    padding: 20px;
+    width: 250px;
+    height: 300px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .menu-card img {
+    width: 60px; /* Size of the icon */
+    height: 60px;
+    margin-bottom: 10px;
+  }
+  
+  .menu-card h2 {
+    font-size: 1.5rem;
+    color: #333;
+    margin: 10px 0;
+  }
+  
+  .menu-card p {
+    color: #666;
+    font-size: 1rem;
+    margin-top: 5px;
+  }
+  
+  /* Hover effect for the cards */
+  .menu-card:hover {
+    background-color: #f0e68c; /* Light yellow */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    transform: translateY(-5px); /* Slightly lift the card */
+  }
+  
+  .menu-card:active {
+    background-color: #ffd700; /* Darker yellow on click */
+    transform: translateY(2px); /* Slightly press the card down */
+  }
+  
+  /* Optional: Make the greeting text larger */
+  #greeting {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  
+  #greeting h1 {
+    font-size: 2rem;
+    color: #333;
+  }
+  

@@ -3,13 +3,22 @@
 </div>
 
 <section id="menu">
-    <div id="cal-link">
-        <!-- <a href="/monthly"><img src="assets/images/temp-cal.webp"></a> -->
-         <h2>Calendar</h2>
+    <div class="menu-card" (click)="goToCalendar()">
+        <img src="assets/images/cal-icon.png" alt="Calendar">
+        <h2>Calendar</h2>
+        <p>View and manage your calendar events.</p>
     </div>
-    <div>
+
+    <div class="menu-card" (click)="goToSchedule()">
+        <img src="assets/images/schedule-icon.png" alt="Schedule">
         <h2>Schedule</h2>
+        <p>Organize and plan your schedule.</p>
     </div>
-    <div>
-        <h2> Tasks</h2>
+
+    <div class="menu-card" (click)="goToTasks()">
+        <img src="assets/images/task-icon.png" alt="Tasks">
+        <h2>Tasks</h2>
+        <p>Track your to-dos and tasks.</p>
     </div>
+</section>
+

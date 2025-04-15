@@ -55,3 +55,19 @@ button {
     background-color: transparent;
  }
  
+ .sidenav-container {
+    display: flex;
+    height: 100%;
+    flex-direction: row;
+  }
+  
+  mat-sidenav {
+    width: 300px;
+    background: #fafafa;
+  }
+  
+  mat-sidenav-content {
+    padding: 26px;
+    flex-grow: 1;
+  }
+  

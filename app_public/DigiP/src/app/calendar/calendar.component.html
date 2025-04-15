@@ -76,6 +76,7 @@
       placeholder="Event title"
       class="event-input"
     />
+
     <div class="event-box-buttons">
       <button class="btn btn-sm btn-success" (click)="addEvent()">Add</button>
       <button class="btn btn-sm btn-outline-secondary" (click)="showAddEventBox = false">Cancel</button>
@@ -92,6 +93,7 @@
       (dayClicked)="dayClicked($event.day)"
       (eventClicked)="handleEvent('Clicked', $event.event)"
       (eventTimesChanged)="eventTimesChanged($event)"
+      (beforeViewRender)="updateCalendarEvents($event)"
     >
     </mwl-calendar-month-view>
     <mwl-calendar-week-view
@@ -114,5 +116,21 @@
     </mwl-calendar-day-view>
   </div>
   
+  <div #modalContent class="details-box" hidden>
+    <div class="modal-header">
+      <h2 class="modal-title">Event</h2>
+      <button type="button" class="close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <h1>Title:</h1>
+      <h3>Date: </h3>
+      <h4> Description:</h4>
+      <br>
+      <pre>{{modalData?.event}}</pre>
+      <button type="button" class="save">Save</button>
+    </div>
+  </div>
 
   

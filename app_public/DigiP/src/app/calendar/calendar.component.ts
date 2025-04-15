@@ -10,8 +10,13 @@ import {
   CalendarEventAction,
   CalendarEventTimesChangedEvent,
   CalendarView,
+  CalendarDayViewBeforeRenderEvent,
+  CalendarMonthViewBeforeRenderEvent,
+  CalendarWeekViewBeforeRenderEvent,
 } from 'angular-calendar';
 import { EventColor } from 'calendar-utils';
+import { RRule } from 'rrule';
+import * as moment from 'moment-timezone';
 import {
   endOfDay,
   isSameDay,
@@ -20,7 +25,7 @@ import {
 } from 'date-fns';
 import { Subject } from 'rxjs';
 import { GoogleCalendarService } from '../google-calendar.service';
-
+import { ViewPeriod } from 'calendar-utils';
 const colors: Record<string, EventColor> = {
   red: {
     primary: '#ad2121',
@@ -36,6 +41,18 @@ const colors: Record<string, EventColor> = {
   },
 };
 
+interface RecurringEvent {
+  title: string;
+  color: any;
+  rrule?: {
+    freq: any;
+    bymonth?: number;
+    bymonthday?: number;
+    byweekday?: any;
+  };
+}
+
+moment.tz.setDefault('Utc');
 
 @Component({
   selector: 'app-calendar',
@@ -50,7 +67,7 @@ export class CalendarComponent {
 
   CalendarView = CalendarView;
 
-  viewDate: Date = new Date();
+  viewDate: Date =  moment().toDate();
 
   modalData: {
     action: string;
@@ -78,6 +95,7 @@ export class CalendarComponent {
   refresh = new Subject<void>();
   clickedDate: Date | null = null;
   showAddEventBox = false;
+  showEventDetails = false;
   newEventTitle = '';
   events: CalendarEvent[] = [
     // {
@@ -93,43 +111,32 @@ export class CalendarComponent {
     //   },
     //   draggable: true,
     // },
-    // {
-    //   start: startOfDay(new Date()),
-    //   title: 'An event with no end date',
-    //   color: { ...colors['yellow '] },
-    //   actions: this.actions,
-    // },
-    // {
-    //   start: subDays(endOfMonth(new Date()), 3),
-    //   end: addDays(endOfMonth(new Date()), 3),
-    //   title: 'A long event that spans 2 months',
-    //   color: { ...colors['blue'] },
-    //   allDay: true,
-    // },
-    // {
-    //   start: addHours(startOfDay(new Date()), 2),
-    //   end: addHours(new Date(), 2),
-    //   title: 'A draggable and resizable event',
-    //   color: { ...colors['yellow ']  },
-    //   actions: this.actions,
-    //   resizable: {
-    //     beforeStart: true,
-    //     afterEnd: true,
-    //   },
-    //   draggable: true,
-    // }
   ];
 
   activeDayIsOpen: boolean = true;
 
+
+  viewPeriod: ViewPeriod | undefined;
+
+recurringEvents: RecurringEvent[] = [
+  // {
+  //   title: 'Recurs on the 5th of each month',
+  //   color: colors.yellow,
+  //   rrule: {
+  //     freq: RRule.MONTHLY,
+  //     bymonthday: 5,
+  //   },
+  // }
+];
+
+
   constructor(private modal: NgbModal, private calService: GoogleCalendarService) {}
 
   ngOnInit() {
-    this.calService.getEvents().subscribe(events => {
-      console.log(events); // or update this.events for the calendar
-      this.events = [...this.events, ...events];
-      console.log(this.events);
-
+    this.calService.getEvents().subscribe((googleEvents) => {
+      const mapped = googleEvents.map(this.mapGoogleToCalendarEvent);
+      this.events = [...this.events, ...mapped];
+      this.refresh.next(); 
     });
   }
 
@@ -168,6 +175,35 @@ export class CalendarComponent {
     this.handleEvent('Dropped or resized', event);
   }
 
+  /**
+   * Obligatory doc: needs to be done by this weekend. 
+   * @param googleEvent 
+   * @returns 
+   */
+   mapGoogleToCalendarEvent(googleEvent: any): CalendarEvent {
+    const isAllDay = !!googleEvent.start.date;
+    const start = googleEvent.start.dateTime || googleEvent.start.date;
+    const end = googleEvent.end?.dateTime || googleEvent.end?.date || start;
+  
+    return {
+      title: googleEvent.summary || 'No title',
+      start: moment(start).toDate(),
+      end: moment(end).toDate(),
+      allDay: isAllDay,
+      color: { primary: '#1e90ff', secondary: '#D1E8FF' },
+      draggable: false,
+      resizable: {
+        beforeStart: false,
+        afterEnd: false,
+      },
+      meta: {
+        googleId: googleEvent.id,
+        original: googleEvent,
+      },
+    };
+  }
+
+  // this modal template is not working. I might have to do something else. 
   handleEvent(action: string, event: CalendarEvent): void {
     this.modalData = { event, action };
     this.modal.open(this.modalContent, { size: 'lg' });
@@ -196,6 +232,44 @@ export class CalendarComponent {
   deleteEvent(eventToDelete: CalendarEvent) {
     this.events = this.events.filter((event) => event !== eventToDelete);
   }
+
+  updateCalendarEvents(viewRender: CalendarMonthViewBeforeRenderEvent): void {
+    if (
+      !this.viewPeriod ||
+      !moment(this.viewPeriod.start).isSame(viewRender.period.start) ||
+      !moment(this.viewPeriod.end).isSame(viewRender.period.end)
+    ) {
+      this.viewPeriod = viewRender.period;
+  
+      const newRecurringEvents: CalendarEvent[] = [];
+  
+      this.recurringEvents.forEach((event) => {
+        const rule = new RRule({
+          ...event.rrule,
+          dtstart: moment(viewRender.period.start).startOf('day').toDate(),
+          until: moment(viewRender.period.end).endOf('day').toDate(),
+        });
+  
+        rule.all().forEach((date) => {
+          newRecurringEvents.push({
+            title: event.title,
+            color: event.color,
+            start: moment(date).toDate(),
+            allDay: true,
+          });
+        });
+      });
+  
+      // Combine recurring + regular events
+      this.events = [
+        ...newRecurringEvents,
+        ...this.events.filter(e => !e.meta?.recurring), // Avoid duplicates
+      ];
+  
+      this.refresh.next();
+    }
+  }
+  
 
   setView(view: CalendarView) {
     this.view = view;

@@ -1,0 +1,30 @@
+.tasks-container {
+    margin: 20px;
+}
+
+.tasks-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.tasks-table th, .tasks-table td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+.tasks-table th {
+    background-color: #f0e68c; /* Light yellow */
+}
+
+.tasks-table td input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+}
+
+progress {
+    width: 100px;
+    height: 20px;
+    margin-right: 10px;
+}
