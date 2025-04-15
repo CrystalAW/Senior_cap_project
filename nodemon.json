@@ -1,0 +1,8 @@
+{
+    "watch": ["./"],
+    "ext": "ts",
+    "ignore": ["node_modules"],
+    "exec": "ts-node --esm ./bin/www.ts"
+  }
+  
+  

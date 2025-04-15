@@ -39,7 +39,8 @@ class Schedule:
         return self.__days
 
     #add an event to a specific day of the month
-    #days will be indexed from 0 to last day of the month-1
+    #days will be indexed from 0 to last day of the month -1
+    #returns a boolean based in whether or not the event was successfully added
     def addEvent(self, day, event):
         #if event is a task, it goes into the tasks list
         if(event.isTask()):
@@ -47,22 +48,24 @@ class Schedule:
                 self.__days[1][day] = [event]
             else:
                 self.__days[1][day].append(event)
-            return
+            return True
 
         #The List for the day at index "day"
         if (self.__days[0][day] is None):
             self.__days[0][day] = [event]
-            return
+            return True
         #events are entered in chronolgical order
         for i in range(0, len(self.__days[0][day])):
             if not(event.isAfter(self.__days[0][day][i])):
                 if event.overlaps(self.__days[0][day][i]):
                     #Implementing overlap will change
                     print(f"There is a scheduling conflict with {self.__days[0][day][i].getName()}.")
+                    return False
                 else:
                     self.__days[0][day].insert(i, event)
-                return
+                return True
         self.__days[0][day].append(event)
+        return True
 
     #Remove an event from a specific day in the schedule
     #this implementation looks for the object
@@ -70,3 +73,64 @@ class Schedule:
     #isTask is an int either 0 (event) or 1 (task)
     def removeEvent(self, day, event, isTask):
         self.__days[isTask][day].remove(event)
+
+    #overall wrapper functions, functions will change as Implementation gets more complex
+    def generateDaySchedule(self, day):
+        #start of day will be the start of the day (wake up + get ready for the day)
+        #Time tuple
+        #add an event to block out the time at the begining of the day (to be removed at end)
+        #Note: This may be temporary if sleep is going to be bblocked out
+        startOfDayEvent = Event("Start Of Day Buffer", "", (0, 0), self.__generateStartOfDay())
+        self.addEvent(day,startOfDayEvent)
+
+        #same thing for end of Day
+        endOfDayEvent = Event("End Of Day Buffer", "", self.__generateEndOfDay(), (23,59))
+        self.addEvent(day,endOfDayEvent)
+        #TODO: hard coded just to make sure this works, add complexity and usefulness
+        while (bool(self.__days[1][day])):
+            #task as an event with start time a negative number same maginitude as duration
+            task = self.__days[1][day].pop()
+            task.taskToEvent(self.__getDuration())
+            #greedy implementation
+            if(not (self.__fitEventGreedy(day, task))):
+                #if __fitEventGreedy returns false, it wasn't able to find an open slot for every event
+                return False
+        return True
+    
+    
+    #TODO: hard coded implementation for 8 am and 10 pm, will optimize
+    def __generateStartOfDay(self):
+        return (8,0)
+    def __generateEndOfDay(self):
+        return (22,0)
+    
+    #TODO: hard coded implementation for 30 minutes, will optimize
+    def __getDuration(self):
+        return 30
+
+    #This fits a given Event into the first available slot in the schedule
+    #This is the first and simplest implementation of this type of function
+    def __fitEventGreedy(self, day, event):
+        #If there are no events, add event no problems (might be obselete with current implementation of generateDaySchedule)
+        if self.__days[0][day] is None:
+            self.__days[0][day] = [event]
+            return True
+        #with current implemntation, the last event is the EOD buffer, so we cannot add an event after that
+        for i in range(len(self.__days[0][day]) - 1):
+            #offset will be = to the end of each event in the list
+            #TODO I have to fix the implementation of offset and offsetTimes() to create correct time
+            #TODO offset has to be a tuple
+            #offset = self.__days[0][day][i].getEndTime() + (-1 * event.getStartTime())
+            offset = self.__days[0][day][i].getEndTime()
+            #offset is a tuple
+            event.offSetTimes(offset)
+            if (self.addEvent(day, event)):
+                #if addEvent was succesful with no conflicts, it will return True
+                return True
+                #other wise, we keep going until EOD buffer
+            #reset start/end times to base form:
+            event.offSetTimes((offset[0] * -1, offset[1] * -1))
+        return False
+    #functions I want to implement:
+    #The scoreSchedule function will encompase the entirety of the "B Features"
+    #def scoreSchedule() = attatch a "score" to a day
