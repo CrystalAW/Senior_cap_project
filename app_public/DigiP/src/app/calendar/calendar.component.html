@@ -116,21 +116,22 @@
     </mwl-calendar-day-view>
   </div>
   
-  <div #modalContent class="details-box" hidden>
+  <ng-template #modalContent  let-modal class="details-box">
     <div class="modal-header">
       <h2 class="modal-title">Event</h2>
-      <button type="button" class="close">
+      <button type="button" class="close" (click)="modal.dismiss()">
         <span aria-hidden="true">&times;</span>
       </button>
     </div>
     <div class="modal-body">
-      <h1>Title:</h1>
-      <h3>Date: </h3>
-      <h4> Description:</h4>
+      <h1>Title: {{modalData?.event?.title}}</h1>
+      <h4>Date: {{modalData?.event?.start | date: 'short'}} - {{modalData?.event?.meta?.end.dateTime | date: 'shortTime'}}</h4>
+      <h5>Attendees: {{getAttendees(modalData?.event)}}</h5>
+      <p> Description: {{modalData?.event?.meta?.description || 'No description'}}</p>
       <br>
-      <pre>{{modalData?.event}}</pre>
-      <button type="button" class="save">Save</button>
+      <!-- <pre>{{modalData?.event | json}}</pre> -->
+      <button type="button" class="save" (click)="modal.close()">Save</button>
     </div>
-  </div>
+  </ng-template>
 
   
