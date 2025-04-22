@@ -1,5 +1,7 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
+import { Component, EventEmitter, Output } from '@angular/core';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ScheduleComponent } from 'src/app/schedule/schedule.component';
+import { TasklistComponent } from 'src/app/tasklist/tasklist.component';
 
 @Component({
   selector: 'app-schedule-form',
@@ -10,9 +12,13 @@ export class ScheduleFormComponent {
   scheduleForm!: FormGroup;
   @Output() submitForm = new EventEmitter<any>();
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder, private schedule: ScheduleComponent, private tasks: TasklistComponent) {}
+
+  events: ScheduleComponent[] = [];
+  tasklist: TasklistComponent[] = [];
 
   ngOnInit(): void {
+  
     this.scheduleForm = this.fb.group({
       entries: this.fb.array([this.createEntry()])
     });
@@ -21,7 +27,13 @@ export class ScheduleFormComponent {
   get entries(): FormArray {
     return this.scheduleForm.get('entries') as FormArray;
   }
+ //pull events and tasks from each component and then assign each task a value and then attach the b
+ //breakdown question to it.
 
+//  listEntries() {
+
+// }
+ 
   createEntry(): FormGroup {
     return this.fb.group({
       title: ['', Validators.required],
