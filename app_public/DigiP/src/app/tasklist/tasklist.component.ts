@@ -35,4 +35,41 @@ export class TasklistComponent {
   trackItem(index: number, item: any): any {
     return item.id || item;
   }
+
+  // createTask(taskFormData: any) {
+  //   this.calendarService.getTaskLists().subscribe({
+  //     next: (taskLists) => {
+  //       const listId = taskLists[0]?.id;
+  //       if (listId) {
+  //         const newTask = {
+  //           title: taskFormData.title,
+  //           notes: taskFormData.description,
+  //           due: taskFormData.due ? new Date(taskFormData.due).toISOString() : undefined,
+  //           status: 'needsAction',
+  //         };
+  
+  //         this.calendarService.createTask(listId, newTask).subscribe({
+  //           next: (task) => {
+  //             const id = task.id;
+  //             console.log('Task created with ID:', id);
+  
+  //             // Optional: patch form with task ID
+  //             // this.myForm.patchValue({ taskId: id });
+  
+  //             // Optional: trigger a UI update or redirect
+  //           },
+  //           error: (err) => {
+  //             console.error('Failed to create task', err);
+  //           }
+  //         });
+  //       } else {
+  //         console.error('No valid task list found.');
+  //       }
+  //     },
+  //     error: (err) => {
+  //       console.error('Failed to fetch task lists', err);
+  //     }
+  //   });
+  // }
+  
 }

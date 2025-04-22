@@ -1,0 +1,43 @@
+<form [formGroup]="scheduleForm" (ngSubmit)="onSubmit()">
+    <div formArrayName="entries">
+      <div *ngFor="let entry of entries.controls; let i = index" [formGroupName]="i" class="entry-group">
+        <h3>Entry {{ i + 1 }}</h3>
+  
+        <label>Title:
+          <input formControlName="title" />
+        </label>
+  
+        <label>Description:
+          <textarea formControlName="description"></textarea>
+        </label>
+  
+        <label>Due Date (Task):
+          <input type="datetime-local" formControlName="due" />
+        </label>
+  
+        <label>Time Duration:
+            <div class="datetime-group">
+                <input type="datetime-local" formControlName="start" placeholder="Start" />
+                <span class="dash">—</span>
+                <input type="datetime-local" formControlName="end" placeholder="End" />
+              </div>
+          </label>
+  
+        <label>Notes:
+          <textarea formControlName="notes"></textarea>
+        </label>
+  
+        <label>Breakdown hours (Task):
+            <input type="number" formControlName="hours">
+          </label>
+
+        <button type="button" (click)="removeEntry(i)" *ngIf="entries.length > 1">Remove Entry</button>
+        <hr />
+      </div>
+    </div>
+  
+    <button type="button" (click)="addEntry()">➕ Add Another Task/Event</button>
+    <br /><br />
+    <button type="submit">✅ Submit Schedule</button>
+  </form>
+  

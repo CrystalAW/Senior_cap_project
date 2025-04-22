@@ -66,3 +66,14 @@
     color: #333;
   }
   
+  .form-container {
+    margin: 2rem auto;
+    max-width: 800px;
+    animation: fadeIn 0.3s ease-in-out;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  

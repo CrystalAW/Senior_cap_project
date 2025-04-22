@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent {
+  visible = false;
   constructor(private router: Router) {}
 
   goToCalendar() {
@@ -19,5 +20,12 @@ export class HomeComponent {
 
   goToTasks() {
     this.router.navigate(['/tasks']);
+  }
+
+  toggleForm() {
+    this.visible = !this.visible;
+  }
+  handleFormSubmit(data: any) {
+    console.log('Form submitted:', data);
   }
 }
