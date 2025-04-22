@@ -1,3 +1,6 @@
+#OBSELETE
+
+
 #Schedule will be the schedule for a month (to start)
 
 #extra note: 2006, 2012, 2017, 2023 has Jan 1st on a Sunday (figure out algorithm for line up later)
@@ -100,7 +103,7 @@ class Schedule:
     
     #TODO: hard coded implementation for 8 am and 10 pm, will optimize
     def __generateStartOfDay(self):
-        return (8,0)
+        return (7,59)
     def __generateEndOfDay(self):
         return (22,0)
     
@@ -117,10 +120,6 @@ class Schedule:
             return True
         #with current implemntation, the last event is the EOD buffer, so we cannot add an event after that
         for i in range(len(self.__days[0][day]) - 1):
-            #offset will be = to the end of each event in the list
-            #TODO I have to fix the implementation of offset and offsetTimes() to create correct time
-            #TODO offset has to be a tuple
-            #offset = self.__days[0][day][i].getEndTime() + (-1 * event.getStartTime())
             offset = self.__days[0][day][i].getEndTime()
             #offset is a tuple
             event.offSetTimes(offset)

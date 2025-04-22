@@ -33,7 +33,7 @@ def createEvent(summary, location, description, start_datetime, end_datetime, ti
 #TODO
 #This has to be a specific task with the delimiter set to account for
 #assumes we are getting a valid amount of hours
-def createEventFromTask(task, h, startTime, timezone):
+def createEventFromTask(eventService, taskService, task, h, startTime, timezone):
     taskNotesSplit = task['notes'].split("###",1)
     event = {
         'summary': task['title'],
@@ -55,11 +55,13 @@ def createEventFromTask(task, h, startTime, timezone):
         },
     }
     #this next set of lines is to update the task to reflect the new amount of hours remaining
-    #TODO, have to either write a task function or fix here
+    #add the event to the calender
+    eventService.events().insert(calendarId='primary', body=event).execute()
+    #update task with new amount of hours.
     hoursInt = int(taskNotesSplit[0].replace("###", ""))
     task['notes'] = "" + str(hoursInt - h) + "###" + taskNotesSplit[1]
-
-    return event
+    taskService.tasks().update(tasklist='@default', task=task['id'], body = task).execute()
+    #TODO check if a task has no hours left and remove it if doesn't have hours
 
 #get events in a given frame, if start is left blank, will start from current time
 #Using UTC format as iso
@@ -79,15 +81,17 @@ def getEvents(servicePath, end, start = None):
     #can get rid of the console output when I am done testing.
     if not events:
       print("No upcoming events found.")
-      return
+      return []
     else:
         for event in events:
             start = event['start'].get('dateTime', event['start'].get('date'))
-            print(f"{event['summary']} — {start}")
+            #print(f"{event['summary']} — {start}")
+            #commented out since done with testing this dirrectly
 
     return events
 
 #start of day is a timeDelta
+#might be obselete
 def taskBDGreedy(servicePath, taskBD, minTime, startOfDay, tz):
     #create a start of day event 
     #starting the next day
