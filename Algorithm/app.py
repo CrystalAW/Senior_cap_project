@@ -1,0 +1,34 @@
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+import datetime
+from script import createSchedule  # import your createSchedule function
+from google.oauth2.credentials import Credentials
+
+app = Flask(__name__)
+CORS(app)  # Allows cross-origin requests
+
+@app.route('/schedule', methods=['POST'])
+def schedule_tasks():
+    data = request.get_json()
+
+    try:
+        # Extract data from POST request
+        creds_dict = data.get('creds')
+        taskBDTupleList = data.get('taskBDTupleList')
+        additionalNotes = data.get('additionalNotes', '')
+        endTime = data.get('endTime')
+        tz = data.get('tz', 'America/New_York')
+
+        # Convert credentials dictionary to Google Credentials object
+        creds = Credentials.from_authorized_user_info(info=creds_dict)
+
+        # Call the scheduling function
+        createSchedule(creds, taskBDTupleList, additionalNotes, endTime, tz)
+
+        return jsonify({"status": "success", "message": "Schedule created successfully."})
+
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+if __name__ == '__main__':
+    app.run(debug=True)

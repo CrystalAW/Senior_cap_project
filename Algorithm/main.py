@@ -5,6 +5,7 @@ import os.path
 from eventFunction import *
 from taskFunction import *
 from gptConnection import *
+from script import *
 
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
@@ -37,6 +38,23 @@ def main():
 #Do not change above here
 
   try:
+    now = datetime.datetime.now(datetime.timezone.utc)
+    tomorrow_end = (now + datetime.timedelta(days=7)).replace(hour=23, minute=59, second=59)
+    time_max = tomorrow_end.isoformat()
+    task_service = build('tasks', 'v1', credentials=creds)
+    allTasks = getTasks(task_service, time_max)
+    taskswithTime = []
+    for task in allTasks:
+      taskswithTime.append((task, 8))
+    addNotes = "focus time for presentation more in the evening/night. I like to got to bed by midnight"
+    createSchedule(creds, taskswithTime, addNotes, time_max, tz = "America/New_York")
+  except HttpError as error:
+        print(f"An error occurred: {error}")
+if __name__ == "__main__":
+  main()
+
+
+'''
     event_service = build("calendar", "v3", credentials=creds)
     task_service = build('tasks', 'v1', credentials=creds)
     tz="America/New_York"
@@ -73,18 +91,7 @@ def main():
     #current output
     #output = "Finish Capstone Write-up,1,2025-04-15T18:00:00-04:00,,Finish Capstone Write-up,1,2025-04-15T19:00:00-04:00,,Finish Capstone Write-up,1,2025-04-15T20:00:00-04:00,,"
     lexOutput(output, event_service, task_service, tasks, tz)
-    #Do not change below here
-
-
-  except HttpError as error:
-    print(f"An error occurred: {error}")
-
-#A function that takes arguments to create an Event
-#This is a very simple example, but this is only the start
-
-if __name__ == "__main__":
-  main()
-
+    '''
 #tests to copy/paste into main
 #my test: add event
 

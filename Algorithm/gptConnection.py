@@ -26,7 +26,7 @@ def buildPrompt(eventStr, taskBDStr, additionalNotes):
     prompt += "\nand these (if listed), additional requirements:\n"
     prompt += additionalNotes
     prompt += "\nin this format for only the new events created for the tasks, with the tasks distributed through out the day without overlapping preexisting events\n"
-    prompt += "[Task Name (dirrect from the string)],[duration of task block as an int],[startTime of specific task block],,"
+    prompt += "[Task Name (dirrect from the string)],[duration of task block as an int],[startTime of specific task block in proper time zone definition for google calendar],,"
     prompt += "\nAnd only output that part on the same line"
     return prompt
 
@@ -79,7 +79,5 @@ def lexOutput(output, eventService, taskService, tasks, tz):
         for task in tasks:
             if task.get('title') == title:
                 currentTask = taskService.tasks().get(tasklist="@default", task=task['id']).execute() 
-                print(currentTask.get('title'))
-                print(currentTask.get('notes'))
         createEventFromTask(eventService, taskService, currentTask, hoursInt, start, tz)
         #find the corresponding task name:
