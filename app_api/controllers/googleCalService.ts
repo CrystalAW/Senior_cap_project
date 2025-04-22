@@ -105,17 +105,27 @@ async listTaskLists(): Promise<any[]> {
   return res.data.items ?? [];
 }
 
-async listTasksFromList(taskListId: string): Promise<any[]> {
+async listTasksFromList(listId: string): Promise<any[]> {
   const auth = await this.authorize();
   const tasks = google.tasks({ version: 'v1', auth });
 
-  const res = await tasks.tasks.list({
-    tasklist: taskListId,
+  const taskListsResponse = await tasks.tasklists.list();
+  const taskLists = taskListsResponse.data.items;
+
+  if (!taskLists || taskLists.length === 0) {
+    throw new Error('No task lists found.');
+  }
+
+  // Use the first available task list
+  const actualListId = taskLists[0].id;
+
+  const response = await tasks.tasks.list({
+    tasklist: actualListId || '', // fallback to empty string
     showCompleted: true,
     maxResults: 20,
   });
 
-  return res.data.items ?? [];
+  return response.data.items || [];
 }
 
 async createTask(taskListId: string, task:any) {
