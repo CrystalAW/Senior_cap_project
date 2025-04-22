@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import datetime
-from script import createSchedule  # import your createSchedule function
+from script import createSchedule
 from google.oauth2.credentials import Credentials
 
 app = Flask(__name__)
