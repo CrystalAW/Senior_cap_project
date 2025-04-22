@@ -1,5 +1,6 @@
 #Functions relating to Events
 import datetime
+import pytz
 from taskFunction import *
 
 def createEvent(summary, location, description, start_datetime, end_datetime, timezone, recurrence=None, attendees=None, reminders=None):

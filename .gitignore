@@ -63,3 +63,7 @@ typings/
 credentials.json
 token.json
 
+# System files
+.DS_Store
+Thumbs.db
+.env
