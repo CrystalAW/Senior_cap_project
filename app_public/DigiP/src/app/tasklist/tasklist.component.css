@@ -1,0 +1,15 @@
+.tasks-container {
+    margin: 60px;
+    width: 33.3%;
+    height: 33vh;
+    border: 2px solid black;
+    /* border-radius: 8px; */
+    float: left;
+}
+
+.task-box {
+    width: 60px;
+    height: 45px;
+    border: 1px dotted blue;
+    margin: 30px;
+}
