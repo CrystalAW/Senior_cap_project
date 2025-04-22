@@ -1,13 +1,15 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { TaskList } from './tasklist.model';
+import { Task } from './tasks.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GoogleCalendarService {
   private calUrl = '/api/calendar';
-
+  private taskUrl = '/api/tasks';
   constructor(private http: HttpClient) { }
 
   getEvents(): Observable<any> {
@@ -20,23 +22,23 @@ export class GoogleCalendarService {
   }
 
   //taskslists api methods
-  getTaskLists(): Observable<any> {
-    return this.http.get(`${this.calUrl}/tasklists/`);
+  getTaskLists(): Observable<TaskList[]> {
+    return this.http.get<TaskList[]>(`${this.taskUrl}/tasklists`);
   }
 
-  getTaskfromLists(listId:string, task:any): Observable<any> {
-    return this.http.get(`${this.calUrl}/tasklists/${listId}/tasks`, task);
+  getTaskfromLists(listId:string): Observable<Task[]> {
+    return this.http.get<Task[]>(`${this.taskUrl}/tasklists/${listId}/tasks`);
   }
 
-  createTask(listId:string, task:any): Observable<any> {
-    return this.http.post(`${this.calUrl}/tasklists/${listId}/tasks`, task);
+  createTask(listId:string, task:any): Observable<Task> {
+    return this.http.post<Task>(`${this.taskUrl}/tasklists/${listId}/tasks`, task);
   }
 
-  completeTask(listId: string, taskId: string): Observable<any> {
-    return this.http.patch(`${this.calUrl}/tasklists/${listId}/tasks/${taskId}/complete}`, {});
+  completeTask(listId: string, taskId: string): Observable<Task> {
+    return this.http.patch<Task>(`${this.taskUrl}/tasklists/${listId}/tasks/${taskId}/complete}`, {});
   }
 
   deleteTask(listId:string, taskId:string): Observable<any> {
-    return this.http.delete(`${this.calUrl}/tasklists/${listId}/tasks/${taskId}`);
+    return this.http.delete(`${this.taskUrl}/tasklists/${listId}/tasks/${taskId}`);
   }
 }

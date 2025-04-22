@@ -1,26 +1,39 @@
-<div class="tasks-container">
-    <h2>Your Tasks</h2>
+<h1> Tasks</h1>
+<div cdkDropListGroup>
+    <div class="tasks-container">
+        <h3>To Do</h3>
+        <div
+        cdkDropList
+        [cdkDropListData]="todo"
+        class="task-box"
+        (cdkDropListDropped)="drop($event)">
+        <div *ngFor="let item of todo; trackBy: trackItem" class="task" cdkDrag>
+           <div class="item">{{item.title}}</div>
+        </div>  
+        </div>
+    </div>
 
-    <table class="tasks-table">
-        <thead>
-            <tr>
-                <th><input type="checkbox" (change)="toggleSelectAll($event)" /></th>
-                <th>Task Name</th>
-                <th>Date</th>
-                <th>Progress</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let task of tasks">
-                <td><input type="checkbox" [(ngModel)]="task.selected" /></td>
-                <td>{{ task.name }}</td>
-                <td>{{ task.dueDate | date: 'MM/dd/yyyy' }}</td>
-                <td>
-                    <progress value="{{ task.progress }}" max="100"></progress>
-                    <span>{{ task.progress }}%</span>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+    <div class="tasks-container">
+        <h3>In progress</h3>
+        <div
+        cdkDropList
+        [cdkDropListData]="progress"
+        class="task-box"
+        (cdkDropListDropped)="drop($event)">
+        <div *ngFor="let item of progress; trackBy: trackItem" class="task" cdkDrag>{{item.title}}</div>
+        </div>
+    </div>
+
+    <div class="tasks-container">
+        <h3>Completed</h3>
+        <div
+        cdkDropList
+        [cdkDropListData]="complete"
+        class="task-box"
+        (cdkDropListDropped)="drop($event)">
+        <div *ngFor="let item of complete; trackBy: trackItem" class="task" cdkDrag>{{item}}</div>
+        </div>
+    </div>
 </div>
+
 

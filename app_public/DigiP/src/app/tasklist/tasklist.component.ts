@@ -1,4 +1,7 @@
 import { Component } from '@angular/core';
+import { GoogleCalendarService } from '../google-calendar.service';
+import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import { Task } from '../tasks.model';
 
 @Component({
   selector: 'app-tasklist',
@@ -6,15 +9,30 @@ import { Component } from '@angular/core';
   styleUrls: ['./tasklist.component.css']
 })
 export class TasklistComponent {
-  tasks = [
-    { name: 'Task 1', dueDate: new Date(), progress: 50, selected: false },
-    { name: 'Task 2', dueDate: new Date(), progress: 20, selected: false },
-    { name: 'Task 3', dueDate: new Date(), progress: 80, selected: false },
-    // Add more tasks here...
-  ];
+  todo: Task[] =[];
+  progress: Task[] = [];
+  complete: Task[] = [];
 
-  toggleSelectAll(event: any) {
-    const isChecked = event.target.checked;
-    this.tasks.forEach(task => task.selected = isChecked);
+  constructor(private calendarService: GoogleCalendarService) {}
+  ngOnInit(): void {
+    this.calendarService.getTaskfromLists('primary').subscribe((tasks: Task[]) => {
+      // You can expand logic here based on additional flags if needed
+      this.todo = tasks.filter(task => task.status === 'needsAction' && !task.notes?.includes('[progress]') && !task.notes?.includes('[complete]'));
+      this.progress = tasks.filter(task => task.notes?.includes('[progress]'));
+      this.complete = tasks.filter(task => task.status === 'completed' || task.notes?.includes('[complete]'));
+    });
+  }
+  // this code is from https://material.angular.io/cdk/drag-drop/overview
+  drop(event: CdkDragDrop<Task[]>) {
+    if (event.previousContainer === event.container) {
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    } else {
+      transferArrayItem(event.previousContainer.data, event.container.data, 
+        event.previousIndex, event.currentIndex);
+    } 
+  }
+
+  trackItem(index: number, item: any): any {
+    return item.id || item;
   }
 }

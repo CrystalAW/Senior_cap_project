@@ -12,8 +12,8 @@ const __dirname = dirname(__filename);
 
 // const indexRouter = require('./app_server/routes/index1');
 // const usersRouter = require('./app_server/routes/users');
-import apiRouter from './app_api/routes/api.js';
-
+import calRouter from './app_api/routes/calRoutes.js';
+import taskRouter from './app_api/routes/taskRoutes.js';
 const app = express();
 
 // view engine setup
@@ -39,7 +39,8 @@ app.use(cookieParser());
 //app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'app_public', 'dist', 'digi-p', 'browser')));
 //app.use(passport.initialize());
-app.use('/api/calendar', apiRouter);
+app.use('/api/calendar', calRouter);
+app.use('/api/tasks', taskRouter);
 app.get('*', (req: Request, res:Response, next: NextFunction) => {
   if(req.path !== '/api') {
     res.sendFile(path.join(__dirname, 'app_public', 'dist','digi-p', 'browser', 'index.html'));

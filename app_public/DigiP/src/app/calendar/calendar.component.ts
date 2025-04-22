@@ -1,25 +1,13 @@
-import {
-  ChangeDetectionStrategy, Component, TemplateRef, ViewChild,
-} from '@angular/core';
+import {ChangeDetectionStrategy, Component, TemplateRef, ViewChild,} from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import {
-  CalendarEvent,
-  CalendarEventAction,
-  CalendarEventTimesChangedEvent,
-  CalendarMonthViewBeforeRenderEvent,
-  CalendarView
-} from 'angular-calendar';
+import {CalendarEvent, CalendarEventAction, CalendarEventTimesChangedEvent, CalendarMonthViewBeforeRenderEvent,CalendarView} from 'angular-calendar';
 import { EventColor, ViewPeriod } from 'calendar-utils';
-import {
-  endOfDay,
-  isSameDay,
-  isSameMonth,
-  startOfDay
-} from 'date-fns';
+import {endOfDay,isSameDay,isSameMonth,startOfDay} from 'date-fns';
 import * as moment from 'moment-timezone';
 import { RRule } from 'rrule';
 import { Subject } from 'rxjs';
 import { GoogleCalendarService } from '../google-calendar.service';
+
 const colors: Record<string, EventColor> = {
   red: {
     primary: '#ad2121',
@@ -98,16 +86,7 @@ export class CalendarComponent {
 
   viewPeriod: ViewPeriod | undefined;
 
-recurringEvents: RecurringEvent[] = [
-  // {
-  //   title: 'Recurs on the 5th of each month',
-  //   color: colors.yellow,
-  //   rrule: {
-  //     freq: RRule.MONTHLY,
-  //     bymonthday: 5,
-  //   },
-  // }
-];
+recurringEvents: RecurringEvent[] = [];
 
 
   constructor(private modal: NgbModal, private calService: GoogleCalendarService) {}
