@@ -1,31 +1,25 @@
 import {
-  ChangeDetectionStrategy,
-  Component,
-  TemplateRef,
-  ViewChild,
+  ChangeDetectionStrategy, Component, TemplateRef, ViewChild,
 } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import {
   CalendarEvent,
   CalendarEventAction,
   CalendarEventTimesChangedEvent,
-  CalendarView,
-  CalendarDayViewBeforeRenderEvent,
   CalendarMonthViewBeforeRenderEvent,
-  CalendarWeekViewBeforeRenderEvent,
+  CalendarView
 } from 'angular-calendar';
-import { EventColor } from 'calendar-utils';
-import { RRule } from 'rrule';
-import * as moment from 'moment-timezone';
+import { EventColor, ViewPeriod } from 'calendar-utils';
 import {
   endOfDay,
   isSameDay,
   isSameMonth,
   startOfDay
 } from 'date-fns';
+import * as moment from 'moment-timezone';
+import { RRule } from 'rrule';
 import { Subject } from 'rxjs';
 import { GoogleCalendarService } from '../google-calendar.service';
-import { ViewPeriod } from 'calendar-utils';
 const colors: Record<string, EventColor> = {
   red: {
     primary: '#ad2121',
@@ -97,21 +91,7 @@ export class CalendarComponent {
   showAddEventBox = false;
   showEventDetails = false;
   newEventTitle = '';
-  events: CalendarEvent[] = [
-    // {
-    //   start: subDays(startOfDay(new Date()), 1),
-    //   end: addDays(new Date(), 1),
-    //   title: 'A 3 day event',
-    //   color: { ...colors['red '] },
-    //   actions: this.actions,
-    //   allDay: true,
-    //   resizable: {
-    //     beforeStart: true,
-    //     afterEnd: true,
-    //   },
-    //   draggable: true,
-    // },
-  ];
+  events: CalendarEvent[] = [];
 
   activeDayIsOpen: boolean = true;
 
@@ -133,6 +113,7 @@ recurringEvents: RecurringEvent[] = [
   constructor(private modal: NgbModal, private calService: GoogleCalendarService) {}
 
   ngOnInit() {
+    // pulls the events from google calendar
     this.calService.getEvents().subscribe((googleEvents) => {
       const mapped = googleEvents.map(this.mapGoogleToCalendarEvent);
       this.events = [...this.events, ...mapped];
@@ -140,6 +121,8 @@ recurringEvents: RecurringEvent[] = [
     });
   }
 
+  //from AC
+  //if day is clicked, activated the add event box
   dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
     if (isSameMonth(date, this.viewDate)) {
       if (
@@ -156,7 +139,7 @@ recurringEvents: RecurringEvent[] = [
     this.showAddEventBox = true;
     this.newEventTitle = '';
   }
-
+// from AC
   eventTimesChanged({
     event,
     newStart,
@@ -184,7 +167,6 @@ recurringEvents: RecurringEvent[] = [
     const isAllDay = !!googleEvent.start.date;
     const start = googleEvent.start.dateTime || googleEvent.start.date;
     const end = googleEvent.end?.dateTime || googleEvent.end?.date || start;
-  
     return {
       title: googleEvent.summary || 'No title',
       start: moment(start).toDate(),
@@ -197,10 +179,22 @@ recurringEvents: RecurringEvent[] = [
         afterEnd: false,
       },
       meta: {
+        start: googleEvent.start,
+        end: googleEvent.end,
         googleId: googleEvent.id,
         original: googleEvent,
+        description: googleEvent.description,
+        attendees: googleEvent.attendees ?? []
       },
     };
+  }
+
+  getAttendees(event?: CalendarEvent): string {
+    const attendees = event?.meta?.attendees;
+    if (!attendees || attendees.length === 0) {
+      return 'No attendees';
+    }
+    return attendees.map((a: { email: any; }) => a.email).join(', ');
   }
 
   // this modal template is not working. I might have to do something else. 

@@ -5,9 +5,13 @@ import { Auth, calendar_v3, google } from 'googleapis';
 import path from 'path';
 import process from 'process';
 
-const SCOPES = ['https://www.googleapis.com/auth/calendar'];
+const SCOPES = [
+  'https://www.googleapis.com/auth/calendar',
+  'https://www.googleapis.com/auth/tasks'
+];
 const TOKEN_PATH = path.join(process.cwd(), 'token.json');
 const CREDENTIALS_PATH = path.join(process.cwd(), 'credentials.json');
+
 
 export class GoogleCalendarService {
   private authClient: Auth.OAuth2Client | null = null;
@@ -88,4 +92,62 @@ export class GoogleCalendarService {
 
     console.log('Event created:', res.data.htmlLink);
   }
+
+// Google Tasks integration
+async listTaskLists(): Promise<any[]> {
+  const auth = await this.authorize();
+  const tasks = google.tasks({ version: 'v1', auth });
+
+  const res = await tasks.tasklists.list({
+    maxResults: 10,
+  });
+
+  return res.data.items ?? [];
+}
+
+async listTasksFromList(taskListId: string): Promise<any[]> {
+  const auth = await this.authorize();
+  const tasks = google.tasks({ version: 'v1', auth });
+
+  const res = await tasks.tasks.list({
+    tasklist: taskListId,
+    showCompleted: true,
+    maxResults: 20,
+  });
+
+  return res.data.items ?? [];
+}
+
+async createTask(taskListId: string, task:any) {
+  const auth = await this.authorize();
+  const tasks = google.tasks({ version: 'v1', auth });
+  const res = await tasks.tasks.insert({
+    tasklist: taskListId,
+    requestBody: task,
+  });
+  return res.data;
+}
+
+async markTaskComplete(taskListId: string, taskId: string) {
+  const auth = await this.authorize();
+  const tasks = google.tasks({ version: 'v1', auth });
+  const res = await tasks.tasks.patch({
+    tasklist: taskListId,
+    task: taskId,
+    requestBody: {
+      status: 'completed',
+      completed: new Date().toISOString(),
+    },
+  });
+  return res.data;
+}
+
+async deleteTask(taskListId:string, taskId: string) {
+  const auth = await this.authorize();
+  const tasks = google.tasks({ version: 'v1', auth });
+  await tasks.tasks.delete({
+    tasklist: taskListId,
+    task: taskId,
+  });
+}
 }
