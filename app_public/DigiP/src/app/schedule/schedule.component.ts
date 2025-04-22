@@ -84,8 +84,30 @@ export class ScheduleComponent {
 
   //need to add something for the tasks here instead maybe
 
+  // createEvent(eventFormData: any) {
+  //   const newEvent = {
+  //     summary: eventFormData.title,
+  //     description: eventFormData.description,
+  //     start: {
+  //       dateTime: new Date(eventFormData.start).toISOString(),
+  //       timeZone: 'America/New_York',
+  //     },
+  //     end: {
+  //       dateTime: new Date(eventFormData.end).toISOString(),
+  //       timeZone: 'America/New_York',
+  //     },
+  //   };
+  
+  //   this.calService.addEvent(newEvent).subscribe({
+  //     next: () => console.log('Event created'),
+  //     error: (err) => console.error('Failed to create event', err)
+  //   });
+  // }
+  
+
+
   exportCSV() {
-    const headers = ['Summary', 'Date & Time', 'Description'];
+    const headers = ['Title', 'Date & Time', 'Description'];
     const rows = this.filteredEvents.map(event => [
       event.summary,
       this.formatEventDate(event.start.dateTime, event.end.dateTime),

@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import {FormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { MatIconModule } from '@angular/material/icon';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -17,6 +17,7 @@ import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { RouterModule } from '@angular/router';
 import {DragDropModule} from '@angular/cdk/drag-drop';
+import { ScheduleFormComponent } from './form/schedule-form/schedule-form.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import {DragDropModule} from '@angular/cdk/drag-drop';
     HeaderComponent,
     HomeComponent,
     ScheduleComponent,
-    TasklistComponent
+    TasklistComponent,
+    ScheduleFormComponent
   ],
   imports: [
     BrowserModule,
@@ -38,6 +40,7 @@ import {DragDropModule} from '@angular/cdk/drag-drop';
     FormsModule,
     HttpClientModule,
     DragDropModule,
+    ReactiveFormsModule,
     CalendarModule.forRoot({ provide: DateAdapter, useFactory: adapterFactory })
   ],
   providers: [],
