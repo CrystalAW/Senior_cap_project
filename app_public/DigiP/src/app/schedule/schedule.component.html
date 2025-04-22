@@ -1,0 +1,49 @@
+<div class="schedule-container">
+    <h2>Your Schedule</h2>
+  
+    <div class="controls">
+      <button (click)="toggleView('table')" [disabled]="viewMode === 'table'">Table View</button>
+      <button (click)="toggleView('list')" [disabled]="viewMode === 'list'">List View</button>
+  
+      <label for="timeFilter">View By:</label>
+      <select id="timeFilter" [(ngModel)]="timeFilter" (change)="filterEvents()">
+        <option value="all">All</option>
+        <option value="day">Day</option>
+        <option value="week">Week</option>
+        <option value="month">Month</option>
+      </select>
+  
+      <input type="date" [(ngModel)]="selectedDate" (change)="onDateChange($event)" />
+  
+      <button (click)="exportCSV()">Export as CSV</button>
+      <button (click)="exportToPDF()">Export as PDF</button>
+    </div>
+  
+    <div *ngIf="viewMode === 'table'">
+      <table>
+        <thead>
+          <tr>
+            <th>Summary</th>
+            <th>Date & Time</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let event of filteredEvents">
+            <td>{{ event.summary }}</td>
+            <td>{{ formatEventDate(event.start.dateTime, event.end.dateTime) }}</td>
+            <td>{{ event.description || '—' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  
+    <div *ngIf="viewMode === 'list'" class="list-view">
+      <div *ngFor="let event of filteredEvents" class="event-card">
+        <h3>{{ event.summary }}</h3>
+        <p>{{ formatEventDate(event.start.dateTime, event.end.dateTime) }}</p>
+        <p *ngIf="event.description"><strong>Details:</strong> {{ event.description }}</p>
+      </div>
+    </div>
+  </div>
+  

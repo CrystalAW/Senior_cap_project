@@ -1,0 +1,56 @@
+.schedule-container {
+    padding: 1rem;
+    background-color: #f7f5f2;
+    border-radius: 12px;
+    max-width: 800px;
+    margin: auto;
+  }
+  
+  .controls {
+    margin-bottom: 1rem;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  
+  button {
+    background-color: burlywood;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  button[disabled] {
+    background-color: #ddd;
+    cursor: not-allowed;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  th, td {
+    border: 1px solid #ddd;
+    padding: 0.5rem;
+  }
+  
+  th {
+    background-color: burlywood;
+  }
+  
+  .list-view {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .event-card {
+    background: white;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  

@@ -1,0 +1,40 @@
+<h1> Tasks</h1>
+
+<div cdkDropListGroup>
+    <div class="tasks-container">
+        <h3>To Do</h3>
+        <div
+        cdkDropList
+        [cdkDropListData]="todo"
+        class="task-box"
+        (cdkDropListDropped)="drop($event)">
+        <div *ngFor="let item of todo; trackBy: trackItem" class="task" cdkDrag>
+           <div class="item">{{item.title}}</div>
+        </div>  
+        </div>
+    </div>
+
+    <div class="tasks-container">
+        <h3>In progress</h3>
+        <div
+        cdkDropList
+        [cdkDropListData]="progress"
+        class="task-box"
+        (cdkDropListDropped)="drop($event)">
+        <div *ngFor="let item of progress; trackBy: trackItem" class="task" cdkDrag>{{item.title}}</div>
+        </div>
+    </div>
+
+    <div class="tasks-container">
+        <h3>Completed</h3>
+        <div
+        cdkDropList
+        [cdkDropListData]="complete"
+        class="task-box"
+        (cdkDropListDropped)="drop($event)">
+        <div *ngFor="let item of complete; trackBy: trackItem" class="task" cdkDrag>{{item}}</div>
+        </div>
+    </div>
+</div>
+
+

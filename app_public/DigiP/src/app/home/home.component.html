@@ -1,0 +1,33 @@
+<div id="greeting">
+    <h1>Hello, User!</h1>
+</div>
+
+<section id="menu">
+    <div class="menu-card" (click)="goToCalendar()">
+        <img src="assets/images/cal-icon.png" alt="Calendar">
+        <h2>Calendar</h2>
+        <p>View and manage your calendar events.</p>
+    </div>
+
+    <div class="menu-card" (click)="goToSchedule()">
+        <img src="assets/images/schedule-icon.png" alt="Schedule">
+        <h2>Schedule</h2>
+        <p>Organize and plan your schedule.</p>
+    </div>
+
+    <div class="menu-card" (click)="goToTasks()">
+        <img src="assets/images/task-icon.png" alt="Tasks">
+        <h2>Tasks</h2>
+        <p>Track your to-dos and tasks.</p>
+    </div>
+
+     <div class="menu-card" (click)="toggleForm()">
+        <img src="assets/images/form-icon.png" alt="Create" />
+        <h2>Create Entry</h2>
+        <p>Create tasks and events in one form.</p>
+    </div>
+</section>
+
+<section *ngIf="visible" class="form-container">
+    <app-schedule-form (formSubmit)="handleFormSubmit($event)"></app-schedule-form>
+  </section>
