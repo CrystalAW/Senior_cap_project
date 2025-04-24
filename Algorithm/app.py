@@ -13,7 +13,6 @@ def schedule_tasks():
     data = request.get_json()
     try:
         # Extract data from POST request
-        print("Recieved data:", data)
         creds_dict = data.get('creds')
         taskBDTupleList = data.get('taskBDTupleList')
         additionalNotes = data.get('additionalNotes', '')
