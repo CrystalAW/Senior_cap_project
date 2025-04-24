@@ -6,12 +6,12 @@ import path from 'path';
 
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { readSavedcreds } from './app_api/controllers/googleCalService.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// const indexRouter = require('./app_server/routes/index1');
-// const usersRouter = require('./app_server/routes/users');
+
 import calRouter from './app_api/routes/calRoutes.js';
 import taskRouter from './app_api/routes/taskRoutes.js';
 const app = express();
@@ -41,6 +41,17 @@ app.use(express.static(path.join(__dirname, 'app_public', 'dist', 'digi-p', 'bro
 //app.use(passport.initialize());
 app.use('/api/calendar', calRouter);
 app.use('/api/tasks', taskRouter);
+
+app.get('/api/creds', async (req, res) => {
+    try {
+      const creds = await readSavedcreds();
+      res.json(creds);
+    } catch (err) {
+      console.error('credential error: ', err);
+      res.status(500).json({error: 'Failed to load valid credentials'});
+    }
+});
+
 app.get('*', (req: Request, res:Response, next: NextFunction) => {
   if(req.path !== '/api') {
     res.sendFile(path.join(__dirname, 'app_public', 'dist','digi-p', 'browser', 'index.html'));

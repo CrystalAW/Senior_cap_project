@@ -10,3 +10,4 @@ export interface Task {
     parent?: string;
     position?: string;
 }
+export type TaskBDTuple = [Task, number];

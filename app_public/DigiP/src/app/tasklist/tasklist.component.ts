@@ -1,7 +1,9 @@
+import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { Component } from '@angular/core';
 import { GoogleCalendarService } from '../google-calendar.service';
-import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
-import { Task } from '../tasks.model';
+import { schedPayload } from '../models/creds.model';
+import { Task, TaskBDTuple } from '../models/tasks.model';
+import { ScheduleService } from '../schedule.service';
 
 @Component({
   selector: 'app-tasklist',
@@ -13,7 +15,8 @@ export class TasklistComponent {
   progress: Task[] = [];
   complete: Task[] = [];
 
-  constructor(private calendarService: GoogleCalendarService) {}
+  constructor(private calendarService: GoogleCalendarService, private scheduleService: ScheduleService) {}
+
   ngOnInit(): void {
     this.calendarService.getTaskfromLists('primary').subscribe((tasks: Task[]) => {
       // You can expand logic here based on additional flags if needed
@@ -22,6 +25,7 @@ export class TasklistComponent {
       this.complete = tasks.filter(task => task.status === 'completed' || task.notes?.includes('[complete]'));
     });
   }
+
   // this code is from https://material.angular.io/cdk/drag-drop/overview
   drop(event: CdkDragDrop<Task[]>) {
     if (event.previousContainer === event.container) {
@@ -36,40 +40,47 @@ export class TasklistComponent {
     return item.id || item;
   }
 
-  // createTask(taskFormData: any) {
-  //   this.calendarService.getTaskLists().subscribe({
-  //     next: (taskLists) => {
-  //       const listId = taskLists[0]?.id;
-  //       if (listId) {
-  //         const newTask = {
-  //           title: taskFormData.title,
-  //           notes: taskFormData.description,
-  //           due: taskFormData.due ? new Date(taskFormData.due).toISOString() : undefined,
-  //           status: 'needsAction',
-  //         };
+
+  generate() {
+    const taskBDTupleList: TaskBDTuple[] = this.todo.map(task => {
+      return [
+        {
+          id: task.id,
+          title: task.title,
+          notes: task.notes ?? '',
+          due: task.due,
+          status: task.status,
+          completed: task.completed,
+          updated: task.updated,
+          selfLink: task.selfLink,
+          parent: task.parent,
+          position: task.position
+        },
+        6 as number
+      ] as TaskBDTuple;
+    });
+    this.scheduleService.getCredentials().subscribe(creds => {
+      const payload: schedPayload = {
+         creds,
+         taskBDTupleList,
+        additionalNotes: 'I want to spread these hours out',
+        endTime: new Date().toISOString(),
+        tz: 'America/New_York'
+      };
+
+      this.scheduleService.generateSchedule(payload).subscribe({
+        next: (res) => {
+          console.log('Schedule created:', res);
+        },
+        error: (err) => {
+          console.error('Schedule creation error:', err);
+        },
+        complete: () => {
+          console.log('Request complete');
+        }
+      });
+    })
+  }
   
-  //         this.calendarService.createTask(listId, newTask).subscribe({
-  //           next: (task) => {
-  //             const id = task.id;
-  //             console.log('Task created with ID:', id);
-  
-  //             // Optional: patch form with task ID
-  //             // this.myForm.patchValue({ taskId: id });
-  
-  //             // Optional: trigger a UI update or redirect
-  //           },
-  //           error: (err) => {
-  //             console.error('Failed to create task', err);
-  //           }
-  //         });
-  //       } else {
-  //         console.error('No valid task list found.');
-  //       }
-  //     },
-  //     error: (err) => {
-  //       console.error('Failed to fetch task lists', err);
-  //     }
-  //   });
-  // }
-  
+  //cal createtask to add that feature
 }

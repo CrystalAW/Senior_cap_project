@@ -1,8 +1,9 @@
-from flask import Flask, request, jsonify
-from flask_cors import CORS
 import datetime
-from script import createSchedule
+
+from flask import Flask, jsonify, request
+from flask_cors import CORS
 from google.oauth2.credentials import Credentials
+from script import createSchedule
 
 app = Flask(__name__)
 CORS(app)  # Allows cross-origin requests
@@ -10,9 +11,9 @@ CORS(app)  # Allows cross-origin requests
 @app.route('/schedule', methods=['POST'])
 def schedule_tasks():
     data = request.get_json()
-
     try:
         # Extract data from POST request
+        print("Recieved data:", data)
         creds_dict = data.get('creds')
         taskBDTupleList = data.get('taskBDTupleList')
         additionalNotes = data.get('additionalNotes', '')

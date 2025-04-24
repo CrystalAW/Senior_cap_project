@@ -12,6 +12,10 @@ const SCOPES = [
 const TOKEN_PATH = path.join(process.cwd(), 'token.json');
 const CREDENTIALS_PATH = path.join(process.cwd(), 'credentials.json');
 
+export async function readSavedcreds():Promise<any> {
+  const cred = await fs.readFile(TOKEN_PATH, 'utf8');
+  return JSON.parse(cred);
+}
 
 export class GoogleCalendarService {
   private authClient: Auth.OAuth2Client | null = null;
@@ -36,6 +40,7 @@ export class GoogleCalendarService {
       client_id: key.client_id,
       client_secret: key.client_secret,
       refresh_token: client.credentials.refresh_token,
+      token_uri: 'https://oauth2.googleapis.com/token'
     });
     await fs.writeFile(TOKEN_PATH, payload);
   }

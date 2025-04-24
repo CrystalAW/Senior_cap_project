@@ -23,6 +23,7 @@ router.get('/', async (req, res) => {
       res.status(500).send('Failed to create event');
     }
   });
+
   
 
 export default router;

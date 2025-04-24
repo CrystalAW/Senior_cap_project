@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { GoogleCalendarService } from '../google-calendar.service';
+import { ScheduleService } from '../schedule.service';
 
 @Component({
   selector: 'app-schedule',
@@ -16,7 +17,7 @@ export class ScheduleComponent {
 
   selectedDate: Date = new Date(); // You can bind this to a datepicker later
 
-  constructor(private calService: GoogleCalendarService) {}
+  constructor(private calService: GoogleCalendarService, private scheduleService: ScheduleService) {}
 
   ngOnInit() {
     this.calService.getEvents().subscribe(events => {
