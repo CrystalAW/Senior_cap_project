@@ -18,6 +18,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { RouterModule } from '@angular/router';
 import {DragDropModule} from '@angular/cdk/drag-drop';
 import { ScheduleFormComponent } from './form/schedule-form/schedule-form.component';
+import { LoginComponent } from './login/login.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { ScheduleFormComponent } from './form/schedule-form/schedule-form.compon
     HomeComponent,
     ScheduleComponent,
     TasklistComponent,
-    ScheduleFormComponent
+    ScheduleFormComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,
