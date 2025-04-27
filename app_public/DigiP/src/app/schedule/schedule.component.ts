@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { GoogleCalendarService } from '../google-calendar.service';
-import { ScheduleService } from '../schedule.service';
+import { ScheduleService } from '../services/schedule.service';
+import { GoogleCalendarService } from '../services/google-calendar.service';
 
 @Component({
   selector: 'app-schedule',

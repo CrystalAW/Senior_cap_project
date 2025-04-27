@@ -1,9 +1,9 @@
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { Component } from '@angular/core';
-import { GoogleCalendarService } from '../google-calendar.service';
 import { schedPayload } from '../models/creds.model';
 import { Task, TaskBDTuple } from '../models/tasks.model';
-import { ScheduleService } from '../schedule.service';
+import { ScheduleService } from '../services/schedule.service';
+import { GoogleCalendarService }  from '../services/google-calendar.service';
 
 @Component({
   selector: 'app-tasklist',

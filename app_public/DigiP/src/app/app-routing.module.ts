@@ -4,12 +4,14 @@ import { CalendarComponent } from './calendar/calendar.component';
 import { HomeComponent } from './home/home.component';
 import { ScheduleComponent } from './schedule/schedule.component';
 import { TasklistComponent } from './tasklist/tasklist.component';
+import { LoginComponent } from './login/login.component';
 
 const routes: Routes = [
   {path: "", component:HomeComponent},
   {path: "calendar", component:CalendarComponent},
   {path: "schedule", component:ScheduleComponent},
   {path: "tasks", component:TasklistComponent},
+  {path: "login", component:LoginComponent}
 ];
 
 @NgModule({

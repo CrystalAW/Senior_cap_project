@@ -6,6 +6,8 @@
     "moduleResolution": "Node",
     "esModuleInterop": true,
     "resolveJsonModule": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowImportingTsExtensions": true,
     "strict": true,
     "skipLibCheck": true,
     "outDir": "./dist",
@@ -15,5 +17,6 @@
   "ts-node": {
     "esm": true
   },
-  "include": ["./bin", "./app", "./app_api", "./app_server"]
+  "include": ["./bin", "./app", "./app_api", "./app_server"],
+  "exclude": ["node_modules"]
 }
