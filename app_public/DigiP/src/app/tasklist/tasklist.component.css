@@ -4,53 +4,65 @@ body, html {
     padding: 0;
   }
   
-  .tasks-container {
-    float: left;
-    width: 33.33%;
-    height: 100vh;
-    box-sizing: border-box;
+  .form {
+    max-width: 600px;
+    margin: auto;
     padding: 20px;
-    border-right: 1px solid #ccc;
-    overflow-y: auto;
+    background-color: #fff8f0;
+    border: 1px solid #ddd;
+    border-radius: 10px;
   }
   
-  .tasks-container:last-child {
-    border-right: none;
-  }
-  
-  .task-box {
+  form {
     display: flex;
     flex-direction: column;
-    gap: 15px;
   }
   
-  .task {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px;
-    background-color: #f9f9f9;
+  select, textarea, input[type="number"] {
+    margin-top: 8px;
+    margin-bottom: 16px;
+    padding: 8px;
+    font-size: 1rem;
     border: 1px solid #ccc;
-    border-radius: 10px;
-    font-size: 14px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    cursor: grab;
-    transition: box-shadow 0.2s ease;
-  }
-
-  .task:active {
-    cursor: grabbing;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    border-radius: 6px;
   }
   
-  .task .item {
-    flex: 1;
-    margin-right: 10px;
+  textarea {
+    resize: vertical;
+    min-height: 100px;
   }
   
-  .task input[type="checkbox"] {
-    flex-shrink: 0;
-    width: 16px;
-    height: 16px;
+  button[type="submit"], button[type="button"] {
+    background-color: #f0a500;
+    border: none;
+    padding: 10px;
+    border-radius: 6px;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-top: 12px;
+  }
+  
+  button[type="submit"]:hover, button[type="button"]:hover {
+    background-color: #d18e00;
+  }
+  
+  .picked-tasks {
+    margin-top: 20px;
+  }
+  
+  .task-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+    background-color: #fff1da;
+    padding: 10px;
+    border-radius: 8px;
+  }
+  
+  .task-item span {
+    flex-grow: 1;
+    font-weight: 500;
   }
   

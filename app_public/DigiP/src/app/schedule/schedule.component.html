@@ -17,33 +17,62 @@
   
       <button (click)="exportCSV()">Export as CSV</button>
       <button (click)="exportToPDF()">Export as PDF</button>
+      <button >Generate a Schedule</button>
     </div>
   
     <div *ngIf="viewMode === 'table'">
       <table>
         <thead>
           <tr>
+            <th>Type</th>
             <th>Summary</th>
             <th>Date & Time</th>
             <th>Description</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let item of combined">
-            <td>{{ item.summary }}</td>
-            <td>{{ formatEventDate(item.start.dateTime, item.end.dateTime) }}</td>
-            <td>{{ item.description || '—' }}</td>
+          <tr *ngFor="let item of filteredEvents">
+            <td class="type">{{item.type === 'event' ? 'E' : 'T'}}</td>
+            <td>{{ item.summary || item.title }}</td>
+            <td>
+              <ng-container *ngIf="item.type === 'event'; else taskDate">
+                {{ formatEventDate(item.start.dateTime, item.end.dateTime) }}
+              </ng-container>
+              <ng-template #taskDate>
+                {{ formatTaskDate(item.due) || 'None' }}
+              </ng-template>
+            </td>
+            <td>
+              <ng-container *ngIf="item.type === 'event'; else taskStatus">
+                {{ item.description || '—' }}
+              </ng-container>
+              <ng-template #taskStatus>
+                {{ item.status !== 'completed' ? 'Incomplete' : 'Complete' }}
+              </ng-template>
+            </td>
           </tr>
         </tbody>
       </table>
     </div>
   
     <div *ngIf="viewMode === 'list'" class="list-view">
-      <div *ngFor="let event of filteredEvents" class="event-card">
-        <h3>{{ event.summary }}</h3>
-        <p>{{ formatEventDate(event.start.dateTime, event.end.dateTime) }}</p>
-        <p *ngIf="event.description"><strong>Details:</strong> {{ event.description }}</p>
+      <div *ngFor="let item of filteredEvents" class="event-card">
+        <h3>{{ item.summary || item.title }}</h3>
+        <p>
+          <ng-container *ngIf="item.type === 'event'; else taskListDate">
+            {{ formatEventDate(item.start.dateTime, item.end.dateTime) }}
+          </ng-container>
+          <ng-template #taskListDate>
+            {{ formatTaskDate(item.due) || 'None' }}
+          </ng-template>
+        </p>
+        <p *ngIf="item.type === 'event' && item.description">
+          <strong>Details:</strong> {{ item.description }}
+        </p>
+        <p *ngIf="item.type === 'task' && item.status !== 'completed'">
+          <strong>Status:</strong> Incomplete
+        </p>
       </div>
-    </div>
+      
   </div>
   

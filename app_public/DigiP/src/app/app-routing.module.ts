@@ -9,9 +9,9 @@ import { TasklistComponent } from './tasklist/tasklist.component';
 
 const routes: Routes = [
   {path: "", component:HomeComponent, canActivate: [authGuard]},
-  {path: "calendar", component:CalendarComponent, canActivate: [authGuard]},
-  {path: "schedule", component:ScheduleComponent, canActivate: [authGuard]},
-  {path: "tasks", component:TasklistComponent, canActivate: [authGuard]},
+  {path: "calendar", component:CalendarComponent},
+  {path: "schedule", component:ScheduleComponent},
+  {path: "tasks", component:TasklistComponent},
   {path: "login", component:LoginComponent}
 ];
 
