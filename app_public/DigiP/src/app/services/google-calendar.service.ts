@@ -21,9 +21,11 @@ export class GoogleCalendarService {
   addEvent(event: any): Observable<any> {
     return this.http.post<any>(this.calUrl, event);
   }
-  sendPayload() {
-    
+  
+  deleteEvent() {
+
   }
+  
   //taskslists api methods
   getTaskLists(): Observable<TaskList[]> {
     return this.http.get<TaskList[]>(`${this.taskUrl}/tasklists`);

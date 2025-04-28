@@ -19,7 +19,6 @@ export class TasklistComponent {
 
   ngOnInit(): void {
     this.calendarService.getTaskfromLists('primary').subscribe((tasks: Task[]) => {
-      // You can expand logic here based on additional flags if needed
       this.todo = tasks.filter(task => task.status === 'needsAction' && !task.notes?.includes('[progress]') && !task.notes?.includes('[complete]'));
       this.progress = tasks.filter(task => task.notes?.includes('[progress]'));
       this.complete = tasks.filter(task => task.status === 'completed' || task.notes?.includes('[complete]'));

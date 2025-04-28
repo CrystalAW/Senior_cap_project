@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { ScheduleService } from '../services/schedule.service';
+import { forkJoin } from 'rxjs';
 import { GoogleCalendarService } from '../services/google-calendar.service';
+import { ScheduleService } from '../services/schedule.service';
 
 @Component({
   selector: 'app-schedule',
@@ -11,6 +12,8 @@ import { GoogleCalendarService } from '../services/google-calendar.service';
 })
 export class ScheduleComponent {
   events: any[] = [];
+  tasks: any[] = [];
+  combined: any[] = [];
   filteredEvents: any[] = [];
   viewMode: 'table' | 'list' = 'table';
   timeFilter: 'all' | 'day' | 'week' | 'month' = 'all';
@@ -20,12 +23,20 @@ export class ScheduleComponent {
   constructor(private calService: GoogleCalendarService, private scheduleService: ScheduleService) {}
 
   ngOnInit() {
-    this.calService.getEvents().subscribe(events => {
+    forkJoin([
+      this.calService.getTaskfromLists('primary'),
+      this.calService.getEvents()
+    ]).subscribe(([tasks, events]) => {
+      this.tasks = tasks;
       this.events = events.sort((a: any, b: any) =>
         new Date(a.start.dateTime).getTime() - new Date(b.start.dateTime).getTime()
       );
-      this.filterEvents();
+    
+      this.combined = [...this.events, ...this.tasks];
+      this.filterEvents();  // if you need it after combining
     });
+
+    console.log("onload: ", this.combined);
   }
 
   filterEvents() {
@@ -83,28 +94,6 @@ export class ScheduleComponent {
     return `${dateStr} ${formatTime(startDate)} - ${formatTime(endDate)}`;
   }
 
-  //need to add something for the tasks here instead maybe
-
-  // createEvent(eventFormData: any) {
-  //   const newEvent = {
-  //     summary: eventFormData.title,
-  //     description: eventFormData.description,
-  //     start: {
-  //       dateTime: new Date(eventFormData.start).toISOString(),
-  //       timeZone: 'America/New_York',
-  //     },
-  //     end: {
-  //       dateTime: new Date(eventFormData.end).toISOString(),
-  //       timeZone: 'America/New_York',
-  //     },
-  //   };
-  
-  //   this.calService.addEvent(newEvent).subscribe({
-  //     next: () => console.log('Event created'),
-  //     error: (err) => console.error('Failed to create event', err)
-  //   });
-  // }
-  
 
 
   exportCSV() {
