@@ -19,7 +19,6 @@ export class TasklistComponent {
 
   ngOnInit(): void {
     this.calendarService.getTaskfromLists('primary').subscribe((tasks: Task[]) => {
-      // You can expand logic here based on additional flags if needed
       this.todo = tasks.filter(task => task.status === 'needsAction' && !task.notes?.includes('[progress]') && !task.notes?.includes('[complete]'));
       this.progress = tasks.filter(task => task.notes?.includes('[progress]'));
       this.complete = tasks.filter(task => task.status === 'completed' || task.notes?.includes('[complete]'));
@@ -46,15 +45,6 @@ export class TasklistComponent {
       return [
         {
           id: task.id,
-          title: task.title,
-          notes: task.notes ?? '',
-          due: task.due,
-          status: task.status,
-          completed: task.completed,
-          updated: task.updated,
-          selfLink: task.selfLink,
-          parent: task.parent,
-          position: task.position
         },
         6 as number
       ] as TaskBDTuple;
