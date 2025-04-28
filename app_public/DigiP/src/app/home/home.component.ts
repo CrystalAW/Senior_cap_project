@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute ,Router } from '@angular/router';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -8,7 +9,22 @@ import { Router } from '@angular/router';
 })
 export class HomeComponent {
   visible = false;
-  constructor(private router: Router) {}
+  constructor(private router: Router, private authService: AuthService, private route: ActivatedRoute) {}
+
+  ngOnInit() {
+    this.route.queryParams.subscribe(params => {
+      if (params['token'] && params['user']) {
+        const user = JSON.parse(params['user']);
+        const token = params['token'];
+        
+        // Now store the user and token in the AuthService
+        this.authService.setUser(user, token);
+        
+        // Navigate to the home page or wherever you want
+        this.router.navigate(['/']);
+      }
+    });
+  }
 
   goToCalendar() {
     this.router.navigate(['/calendar']);

@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
-import { NgForm } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -12,32 +11,29 @@ export class LoginComponent {
     log = false;
     sign = true
 
-    constructor(private authService: AuthService, private router: Router) {}
+    constructor(private authService: AuthService, private router: Router, private route: ActivatedRoute) {}
 
     ngOnInit() {
-      this.authService.getUserListener().subscribe(
-        (user) => {
-          if (user != null) {
-            this.router.navigate(['/']);
-          }
-        })
-    }
+      this.route.queryParams.subscribe(params => {
+        if (params['error'] === 'unauthorized') {
+          alert ('Access Denied! This account is not authorized.')
+        }
 
-    register(form: NgForm) {
-      this.authService.register({
-        user: {email: form.value.email, name:form.value.name},
-        password: form.value.password
+        const token = params['token'];
+        const user = params['user'];
+
+        if (token && user) {
+          const parsedUser = JSON.parse(decodeURIComponent(user));
+          this.authService.setUser(parsedUser, token);
+          this.router.navigate(['/']);
+        }
       });
+
+      
     }
 
-    changeView(selected: string) {
-      if (selected === 'log') {
-        this.log = !this.log;
-        this.sign = !this.sign;
-      } else if (selected === 'sign') {
-        this.log = !this.log;
-        this.sign = !this.sign;
-      }
+    login() {
+      this.authService.googleLogin();
     }
 
 }

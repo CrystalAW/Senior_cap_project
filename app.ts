@@ -1,4 +1,5 @@
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
 import dotenv from 'dotenv';
 import express, { NextFunction, Request, Response } from 'express';
 import session from 'express-session';
@@ -27,21 +28,26 @@ const app = express();
 app.set('views', path.join(__dirname, 'app_server', 'views'));
 app.set('view engine', 'pug');
 
+app.use('*' ,cors({
+  origin: 'http://localhost:4200',
+  methods: ['GET', 'POST', 'OPTIONS'],
+  credentials: true,
+}))
+
 app.use(logger('dev'));
 app.use(express.json());
-app.use(passport.initialize());
-app.use(function(req: Request, res: Response, next: NextFunction) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-  );
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, PATCH, PUT, DELETE, OPTIONS"
-  );
-  next();
-})
+// app.use(function(req: Request, res: Response, next: NextFunction) {
+//   res.setHeader("Access-Control-Allow-Origin", "*");
+//   res.setHeader(
+//     "Access-Control-Allow-Headers",
+//     "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+//   );
+//   res.setHeader(
+//     "Access-Control-Allow-Methods",
+//     "GET, POST, PATCH, PUT, DELETE, OPTIONS"
+//   );
+//   next();
+// })
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 //app.use(express.static(path.join(__dirname, 'public')));
@@ -52,9 +58,12 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
 }));
+
+
 app.use(passport.initialize());
 app.use(passport.session());
-app.use('/auth', authRoutes);
+
+app.use('/api/auth', authRoutes);
 app.use('/api/calendar', calRouter);
 app.use('/api/tasks', taskRouter);
 

@@ -8,6 +8,7 @@
     "resolveJsonModule": true,
     "forceConsistentCasingInFileNames": true,
     "allowImportingTsExtensions": true,
+    "noImplicitAny": false,
     "strict": true,
     "skipLibCheck": true,
     "outDir": "./dist",

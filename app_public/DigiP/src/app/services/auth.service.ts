@@ -1,97 +1,74 @@
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, Observable } from 'rxjs';
 import User from '../models/user.model';
-import {Observable, Subject} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  URL = "http://localhost:300/api/user";
-  TOKEN_KEY = "token";
-
-  user: User | null = null;
-  userListener: Subject<User | null> = new Subject();
-
-  constructor(private http: HttpClient) { }
-
-  register({user, password}: {user: User, password: string}) {
-    this.http.post<{token: string, user: User} | {error: any}>(this.URL + "register",
-        {
-            name: user.name,
-            email: user.email,
-            password
-        })
-        .subscribe((response) => {
-            if ("error" in response) {
-                console.log(response.error);
-            }
-            else {
-                const token = response.token;
-                localStorage.setItem(this.TOKEN_KEY, token);
-                this.user = response.user;
-                this.userListener.next(this.user);
-            }
-        })
-}
-
-login({email, password}: {email: string, password: string}) {
-    this.http.post<{token: string, user: User} | {error: any}>(this.URL + "login",
-        {
-            email,
-            password,
-        })
-        .subscribe((response) => {
-            if ("error" in response) {
-                console.log(response.error);
-            }
-            else {
-                const token = response.token;
-                localStorage.setItem(this.TOKEN_KEY, token);
-                this.user = response.user;
-                this.userListener.next(this.user);
-            }
-        })
-}
-
-isLoggedIn(): boolean {
-    return this.user !== null;
-}
-
-getUser(): User | null {
-    return this.user;
-}
-
-getUserListener(): Observable<User | null> {
-    return this.userListener.asObservable();
-}
-
-autoLogIn(): void {
-    const token = localStorage.getItem(this.TOKEN_KEY);
-    if (token) {
-        const tokenPayload = JSON.parse(atob(token.split('.')[1]));
-        // JWT expiration date is in seconds
-        const expirationDate = new Date(tokenPayload.exp); 
-        if (new Date().getTime() > expirationDate.getTime()) {
-            this.retrieveUser(tokenPayload.email);
-        }
+    private URL = "http://localhost:3000/api/auth/";
+    private TOKEN_KEY = "token";
+    private USER_KEY = "user"; // Key for storing user info in localStorage
+    
+    private userSubject: BehaviorSubject<User | null> = new BehaviorSubject<User | null>(null);
+    public userListener: Observable<User | null> = this.userSubject.asObservable();
+  
+    constructor(private http: HttpClient) { }
+  
+    googleLogin(): void {
+      window.location.href = 'http://localhost:3000/api/auth/google';
     }
-}
+      
+    // Logout the user and remove session data
+    logout(): void {
+      localStorage.removeItem(this.TOKEN_KEY);
+      localStorage.removeItem(this.USER_KEY);  // Remove user data
+      this.userSubject.next(null);  // Notify that the user has logged out
+      window.location.href = '/login';
+    }
+  
+    // Check if the user is logged in (by checking token and user)
+    isLoggedIn(): boolean {
+      return this.userSubject.value !== null;
+    }
+  
+    // Get user from localStorage or from service
+    getUser(): User | null {
+      if (!this.userSubject.value) {
+        const user = localStorage.getItem(this.USER_KEY);
+        return user ? JSON.parse(user) : null;  // Return user from localStorage if available
+      }
+      return this.userSubject.value;
+    }
+  
+    // Set the user data in both BehaviorSubject and localStorage
+    setUser(user: User, token: string): void {
+      this.userSubject.next(user);  // Set user in service state
+      localStorage.setItem(this.TOKEN_KEY, token);  // Store token in localStorage
+      localStorage.setItem(this.USER_KEY, JSON.stringify(user));  // Store user info in localStorage
+    }
+  
+    checkLoggedInUser(): void {
+        const token = localStorage.getItem(this.TOKEN_KEY);
+        //error checking
+        if (!token) {
+            console.log('No token yet, skip checking for user.');
+            return;
+        }
 
-retrieveUser(email: string): void {
-    this.http.get<User | null>(this.URL + email)
-        .subscribe((user: User | null) => {
-            if (user) {
-                this.user = user;
-                this.userListener.next(user);
-            }
-        });
-}
-
-logout() {
-    localStorage.removeItem(this.TOKEN_KEY);
-    this.user = null;
-    this.userListener.next(null);
-}
+        if (token) {
+          const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+          this.http.get<{user: User}>(`${this.URL}me`, { headers })
+            .subscribe(response => {
+              if (response.user) {
+                this.setUser(response.user, token);
+              }
+            }, error => {
+              console.error('Failed to fetch user', error);
+            });
+        }
+      }
+      
 }

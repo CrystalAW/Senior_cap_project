@@ -1,7 +1,7 @@
-<!-- <script src="https://apis.google.com/js/platform.js" async defer></script> -->
-<!-- <meta name="google-signin-client_id" content="process.env.GOOGLE_CLIENT_ID.apps.googleusercontent.com"> -->
+<!-- <script src="https://apis.google.com/js/platform.js" async defer></script> 
+ <meta name="google-signin-client_id" content="process.env.GOOGLE_CLIENT_ID.apps.googleusercontent.com"> -->
 <!-- ngIf to show either, go through textbook to create this -->
-<div class="login-box" *ngIf="log">
+<!-- <div class="login-box" *ngIf="log">
     <label>Username:
         <input type="text">
     </label><br>
@@ -27,4 +27,13 @@
     </form>
     <p>Already have an account? <a (click)="changeView('sign')">LOGIN HERE!</a></p>
     <div class="g-signin2" data-onsuccess="onSignIn"></div>
+</div> -->
+
+<div>
+    <h1>Digital Planner</h1>
+    <h3> Let's get started</h3>
+
+    <div class="g-signin2" data-onsuccess="onSignIn">
+        <button (click)="login()">Login with Google</button>
+    </div>
 </div>
