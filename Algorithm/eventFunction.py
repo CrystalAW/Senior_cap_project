@@ -34,6 +34,7 @@ def createEvent(summary, location, description, start_datetime, end_datetime, ti
 #TODO
 #This has to be a specific task with the delimiter set to account for
 #assumes we are getting a valid amount of hours
+#h is a float
 def createEventFromTask(eventService, taskService, task, h, startTime, timezone):
     taskNotesSplit = task['notes'].split("###",1)
     event = {
@@ -59,11 +60,12 @@ def createEventFromTask(eventService, taskService, task, h, startTime, timezone)
     #add the event to the calender
     eventService.events().insert(calendarId='primary', body=event).execute()
     #update task with new amount of hours.
-    hoursInt = int(taskNotesSplit[0].replace("###", ""))
-    task['notes'] = "" + str(hoursInt - h) + "###" + taskNotesSplit[1]
-    taskService.tasks().update(tasklist='@default', task=task['id'], body = task).execute()
-    #TODO check if a task has no hours left and remove it if doesn't have hours
-
+    hoursF = float(taskNotesSplit[0].replace("###", "")) - h 
+    task['notes'] = "" + str(hoursF) + "###" + taskNotesSplit[1]
+    if (hoursF <= 0.0):
+        delete_task(taskService, task['id'])
+    else:
+        taskService.tasks().update(tasklist='@default', task=task['id'], body = task).execute()
 #get events in a given frame, if start is left blank, will start from current time
 #Using UTC format as iso
 def getEvents(servicePath, end, start = None):
@@ -90,23 +92,3 @@ def getEvents(servicePath, end, start = None):
             #commented out since done with testing this dirrectly
 
     return events
-
-#start of day is a timeDelta
-#might be obselete
-def taskBDGreedy(servicePath, taskBD, minTime, startOfDay, tz):
-    #create a start of day event 
-    #starting the next day
-    tomorrow = datetime.datetime.now(tz) + datetime.timedelta(days=1)
-    midnight = datetime.datetime.combine(tomorrow.date(), datetime.time.min, tzinfo = tz)
-    sod = midnight + startOfDay
-    Rrule = "RRULE:FREQ=DAILY;UNTIL=" + taskBD['due']
-    startOfDayEvent = createEvent("Placeholder", "null", "null", midnight, sod, tz, Rrule)
-    startOfDayEvent = servicePath.events().insert(calendarId='primary', body=startOfDayEvent).execute()
-    events = getEvents(servicePath, taskBD['due'])
-    print(minTime) #only so it can be anything, delete after check
-
-
-
-    #Deleting any events that were only added to space this out.
-    servicePath.events().delete(calendarId= '@default', eventId=startOfDayEvent['id']).execute()
-    return

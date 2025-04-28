@@ -46,7 +46,7 @@ def main():
     taskswithTime = []
     for task in allTasks:
       taskswithTime.append((task, 8))
-    addNotes = "focus time for presentation more in the evening/night. I like to got to bed by midnight"
+    addNotes = "I need to go to bed at midnight"
     createSchedule(creds, taskswithTime, addNotes, time_max, tz = "America/New_York")
   except HttpError as error:
         print(f"An error occurred: {error}")
