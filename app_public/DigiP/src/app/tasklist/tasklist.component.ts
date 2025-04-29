@@ -130,7 +130,6 @@ export class TasklistComponent {
       const payload: any = {
         creds,
         endTime: endTimeISO,
-        tz: 'America/New_York'
       };
   
       console.log("payload", payload);

@@ -29,7 +29,7 @@ export class ScheduleService {
 
   regenerateSchedule(payload: schedPayload): Observable<any> {
     return this.http.get<googleCreds>(this.credUrl).pipe(
-      map(creds => ({...payload, creds} as schedPayload)),
+      map(creds => ({...payload, creds} as any)),
       switchMap(fullpayload => this.http.post<any>(`${this.pyUrl}/reset`, fullpayload))
     );
   }
