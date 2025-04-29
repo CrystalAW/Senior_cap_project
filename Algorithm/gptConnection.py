@@ -6,16 +6,16 @@ import os
 
 load_dotenv()
 openai_key = os.getenv("GPT_API_KEY")
+client = openai.OpenAI(api_key=openai_key)
 
 def gptPrompt(text: str) -> str:
-    response = openai.ChatCompletion.create(
-        model="gpt-4",  # or "gpt-4-1106-preview", or "gpt-4.0", depending on your access
+    response = client.chat.completions.create(
+        model="gpt-4",  # or "gpt-4-1106-preview" or "gpt-4o" depending on your access
         messages=[
             {"role": "user", "content": text}
         ]
     )
-    return response["choices"][0]["message"]["content"]
-
+    return response.choices[0].message.content
 
 #functions to build my input from what I have already
 #This is the base function for everything I will do with prompts
