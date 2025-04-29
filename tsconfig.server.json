@@ -1,23 +1,29 @@
 // tsconfig.server.json
 {
   "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "src/*": ["src/*"]
+    },
     "target": "ES2022",
     "module": "ESNext",
     "moduleResolution": "Node",
     "esModuleInterop": true,
     "resolveJsonModule": true,
+    "lib": ["ES2022", "DOM"],
     "forceConsistentCasingInFileNames": true,
     "allowImportingTsExtensions": true,
     "noImplicitAny": false,
+    "noEmit": true,
     "strict": true,
     "skipLibCheck": true,
     "outDir": "./dist",
-    "rootDir": "./",
+    "rootDir": "./src",
     "types": ["node"]
   },
   "ts-node": {
     "esm": true
   },
-  "include": ["./bin", "./app", "./app_api", "./app_server"],
+  "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]
 }
