@@ -4,65 +4,50 @@ body, html {
     padding: 0;
   }
   
-  .form {
-    max-width: 600px;
-    margin: auto;
-    padding: 20px;
-    background-color: #fff8f0;
-    border: 1px solid #ddd;
-    border-radius: 10px;
+  .task-form-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 2rem;
+    padding: 2rem;
+    flex-wrap: wrap;
   }
   
-  form {
+  .form {
+    background: #f9f9f9;
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 10px rgba(200, 100, 150, 0.1);
+    flex: 1 1 45%;
+    min-width: 300px;
+  }
+  
+  .left-form form,
+  .right-form {
     display: flex;
     flex-direction: column;
+    gap: 1rem;
   }
   
-  select, textarea, input[type="number"] {
-    margin-top: 8px;
-    margin-bottom: 16px;
-    padding: 8px;
-    font-size: 1rem;
+  button {
+    padding: 0.5rem 1rem;
+    background-color: #8e44ad;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  button:hover {
+    background-color: #2980b9;
+  }
+  
+  input,
+  textarea,
+  select {
+    padding: 0.5rem;
     border: 1px solid #ccc;
     border-radius: 6px;
-  }
-  
-  textarea {
-    resize: vertical;
-    min-height: 100px;
-  }
-  
-  button[type="submit"], button[type="button"] {
-    background-color: #f0a500;
-    border: none;
-    padding: 10px;
-    border-radius: 6px;
-    color: white;
-    font-size: 1rem;
-    cursor: pointer;
-    margin-top: 12px;
-  }
-  
-  button[type="submit"]:hover, button[type="button"]:hover {
-    background-color: #d18e00;
-  }
-  
-  .picked-tasks {
-    margin-top: 20px;
-  }
-  
-  .task-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 10px;
-    background-color: #fff1da;
-    padding: 10px;
-    border-radius: 8px;
-  }
-  
-  .task-item span {
-    flex-grow: 1;
-    font-weight: 500;
+    width: 100%;
   }
   

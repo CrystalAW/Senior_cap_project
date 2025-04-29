@@ -19,6 +19,7 @@ import { RouterModule } from '@angular/router';
 import {DragDropModule} from '@angular/cdk/drag-drop';
 import { ScheduleFormComponent } from './form/schedule-form/schedule-form.component';
 import { LoginComponent } from './login/login.component';
+import {MatToolbarModule} from '@angular/material/toolbar';
 
 @NgModule({
   declarations: [
@@ -39,6 +40,7 @@ import { LoginComponent } from './login/login.component';
     MatSidenavModule,
     RouterModule,
     NgbModule,
+    MatToolbarModule,
     FormsModule,
     HttpClientModule,
     DragDropModule,
