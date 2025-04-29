@@ -8,7 +8,8 @@ export interface googleCreds {
 }
 
 export interface schedPayload {
-    taskBDTupleList: TaskBDTuple[];
+    taskBDTupleList?: TaskBDTuple[];
+    input?: TaskBDTuple[],
     additionalNotes: string;
     endTime: string;
     tz: string;

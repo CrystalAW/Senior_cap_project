@@ -1,9 +1,10 @@
 // googleCalendarService.ts
 import { authenticate } from '@google-cloud/local-auth';
-import fs from 'fs/promises';
+import * as fs from 'fs/promises';
 import { Auth, calendar_v3, google } from 'googleapis';
-import path from 'path';
-import process from 'process';
+import { authorize } from 'passport';
+import * as path from 'path';
+import * as process from 'process';
 
 const SCOPES = [
   'https://www.googleapis.com/auth/calendar',
@@ -165,4 +166,6 @@ async deleteTask(taskListId:string, taskId: string) {
     task: taskId,
   });
 }
+
 }
+

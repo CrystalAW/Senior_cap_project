@@ -1,9 +1,8 @@
-import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { Component } from '@angular/core';
-import { GoogleCalendarService } from '../google-calendar.service';
 import { schedPayload } from '../models/creds.model';
 import { Task, TaskBDTuple } from '../models/tasks.model';
-import { ScheduleService } from '../schedule.service';
+import { GoogleCalendarService } from '../services/google-calendar.service';
+import { ScheduleService } from '../services/schedule.service';
 
 @Component({
   selector: 'app-tasklist',
@@ -12,49 +11,104 @@ import { ScheduleService } from '../schedule.service';
 })
 export class TasklistComponent {
   todo: Task[] =[];
-  progress: Task[] = [];
-  complete: Task[] = [];
+  pickedTasks: Task[] = [];
+  bdNumbers: {[key: string]: number} = {};
+  additionalNotes = '';
+  endTime = '';
+  savedEndTime = '';
+  totalTasks : Task[] = [];
+
+  //  taskBDTupleList: TaskBDTuple [] = this.pickedTasks.map(task => {
+  //   return [
+  //     {  id: task.id,
+  //       title: task.title,
+  //       notes: task.notes ?? '',
+  //       due: task.due,
+  //       status: task.status,
+  //       completed: task.completed,
+  //       updated: task.updated,
+  //       selfLink: task.selfLink,
+  //       parent: task.parent,
+  //       position: task.position
+  //     },
+  //     this.bdNumbers[task.id]
+  //   ]
+  // });
 
   constructor(private calendarService: GoogleCalendarService, private scheduleService: ScheduleService) {}
 
   ngOnInit(): void {
+    this.refresh();
+  }
+
+  refresh() {
     this.calendarService.getTaskfromLists('primary').subscribe((tasks: Task[]) => {
-      this.todo = tasks.filter(task => task.status === 'needsAction' && !task.notes?.includes('[progress]') && !task.notes?.includes('[complete]'));
-      this.progress = tasks.filter(task => task.notes?.includes('[progress]'));
-      this.complete = tasks.filter(task => task.status === 'completed' || task.notes?.includes('[complete]'));
+      this.todo = tasks.filter(task => task.status === 'needsAction');
     });
   }
 
-  // this code is from https://material.angular.io/cdk/drag-drop/overview
-  drop(event: CdkDragDrop<Task[]>) {
-    if (event.previousContainer === event.container) {
-      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
-    } else {
-      transferArrayItem(event.previousContainer.data, event.container.data, 
-        event.previousIndex, event.currentIndex);
-    } 
+  selectTask (event: Event) {
+    const selectElement = event.target as HTMLSelectElement;
+    const selectedIds = Array.from(selectElement.selectedOptions).map(option => option.value);
+  
+    this.pickedTasks = this.todo.filter(task => selectedIds.includes(task.id));
+    
+    // Rebuild bdNumbers for picked tasks
+    this.bdNumbers = {};
+    this.pickedTasks.forEach(task => {
+      if (!this.bdNumbers[task.id]) {
+        this.bdNumbers[task.id] = 0; // default  number
+      }
+    });
   }
 
-  trackItem(index: number, item: any): any {
-    return item.id || item;
+  addTask(taskId: string) {
+    const selectedTask = this.todo.find(task => task.id === taskId);
+    if (selectedTask && !this.pickedTasks.find(t => t.id === taskId)) {
+      this.pickedTasks.push(selectedTask);
+      this.totalTasks.push(selectedTask);
+      this.bdNumbers[taskId] = 0; 
+    }
   }
 
+  removeTask(taskId: string) {
+    this.pickedTasks = this.pickedTasks.filter(task => task.id !== taskId);
+    delete this.bdNumbers[taskId];
+  }
 
   generate() {
-    const taskBDTupleList: TaskBDTuple[] = this.todo.map(task => {
+    
+
+    const taskBDTupleList: TaskBDTuple [] = this.pickedTasks.map(task => {
       return [
-        {
-          id: task.id,
+        {  id: task.id,
+          title: task.title,
+          notes: task.notes ?? '',
+          due: task.due,
+          status: task.status,
+          completed: task.completed,
+          updated: task.updated,
+          selfLink: task.selfLink,
+          parent: task.parent,
+          position: task.position
         },
-        6 as number
-      ] as TaskBDTuple;
+        this.bdNumbers[task.id]
+      ]
     });
+    
+    console.log('Data to be sent to backend:', {
+      pickedTasks: this.pickedTasks,
+      bdNumbers: this.bdNumbers,
+      taskBDTupleList,
+      additionalNotes: this.additionalNotes
+    });
+
     this.scheduleService.getCredentials().subscribe(creds => {
       const payload: schedPayload = {
          creds,
          taskBDTupleList,
-        additionalNotes: 'I want to spread these hours out',
-        endTime: new Date().toISOString(),
+        additionalNotes: this.additionalNotes,
+        endTime: new Date(this.endTime).toISOString(),
         tz: 'America/New_York'
       };
 
@@ -69,8 +123,50 @@ export class TasklistComponent {
           console.log('Request complete');
         }
       });
-    })
+    });
+
+    this.refresh();
   }
   
-  //cal createtask to add that feature
+
+  reset() {
+    this.scheduleService.getCredentials().subscribe(creds => {
+      let endTimeISO: string;
+      
+      if (this.savedEndTime) {
+        const parsedDate = new Date(this.savedEndTime);
+        if (!isNaN(parsedDate.getTime())) {
+          endTimeISO = parsedDate.toISOString();
+        } else {
+          console.warn('Invalid savedEndTime, using now instead');
+          endTimeISO = new Date().toISOString();
+        }
+      } else {
+        console.warn('No savedEndTime, using now instead');
+        endTimeISO = new Date().toISOString();
+      }
+  
+      const payload: any = {
+        creds,
+        endTime: endTimeISO,
+      };
+  
+      console.log("payload", payload);
+  
+      this.scheduleService.regenerateSchedule(payload).subscribe({
+        next: (res) => {
+          console.log('Schedule created:', res);
+        },
+        error: (err) => {
+          console.error('Schedule creation error:', err);
+        },
+        complete: () => {
+          console.log('Request complete');
+        }
+      });
+    });
+    
+    this.refresh();
+  }
+  
 }

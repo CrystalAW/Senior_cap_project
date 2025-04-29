@@ -1,48 +1,59 @@
-<h1> Tasks</h1>
+<!-- form to input notes for genrating schedule -->
+<div class="form">
+  <form (ngSubmit)="generate()">
+    <legend>Task Breakdown</legend>
 
-<div cdkDropListGroup>
-    <div class="tasks-container">
-        <h3>To Do</h3>
-        <div
-        cdkDropList
-        [cdkDropListData]="todo"
-        class="task-box"
-        (cdkDropListDropped)="drop($event)">
-        <div *ngFor="let item of todo; trackBy: trackItem" class="task" cdkDrag>
-           <div class="item" cdkDrag>{{item.title}}</div>
-           <input type="checkbox" (click)="$event.stopPropagation()">
-        </div>  
-        </div>
-    </div>
-
-    <div class="tasks-container">
-        <h3>In progress</h3>
-        <div
-        cdkDropList
-        [cdkDropListData]="progress"
-        class="task-box"
-        (cdkDropListDropped)="drop($event)">
-        <div *ngFor="let item of progress; trackBy: trackItem" class="task" cdkDrag>
-            <div class="item" cdkDrag>{{item.title}}</div>
-            <input type="checkbox" (click)="$event.stopPropagation()">
-        </div>
-        </div>
-    </div>
-
-    <div class="tasks-container">
-        <h3>Completed</h3>
-        <div
-        cdkDropList
-        [cdkDropListData]="complete"
-        class="task-box"
-        (cdkDropListDropped)="drop($event)">
-        <div *ngFor="let item of complete; trackBy: trackItem" class="task" cdkDrag>
-            <div class="item" cdkDrag>{{item.title}}</div>
-            <input type="checkbox" (click)="$event.stopPropagation()">
-        </div>
-        </div>
-    </div>
-    <button (click)="generate()">Generate Schedule</button>
+    <label for="taskSelect">Choose tasks to breakdown:</label>
+    <div>
+        <h4>Total tasks</h4>
+    <ul type="square" *ngFor="let task of todo">
+        <li (click)="addTask(task.id)">{{task.title}}</li>
+    </ul>
 </div>
 
+    <div *ngIf="pickedTasks.length > 0" class="picked-tasks">
+      <h4>Selected Tasks:</h4>
+      <div *ngFor="let task of pickedTasks" class="task-item">
+        <span>{{ task.title }}</span>
+        <input
+          type="number"
+          [(ngModel)]="bdNumbers[task.id]"
+          name="breakdown-{{task.id}}"
+          min="1"
+          required
+        />
+      </div>
+    </div>
 
+    <label>Deadline for set of tasks:
+        <input [(ngModel)]="endTime" type="date" name="endTime">
+    </label>
+    <label>
+      Additional notes:<br>
+      <textarea [(ngModel)]="additionalNotes" name="additionalNotes"></textarea>
+    </label>
+
+    <div *ngIf="this.pickedTasks.length > 1">
+        <h4>Total selected tasks: {{this.pickedTasks.length}}</h4>
+    </div>
+    <button type="submit">Generate</button>
+  </form>
+</div>
+
+<!-- where the generated schedule will pop up -->
+<div class="form">
+    <h3>Where generated scheduled will go</h3>
+    <ol *ngFor="let item of todo">
+        <li>{{item.title}}</li>
+    </ol>
+    <label>Reaffirm endTime:
+        <input [(ngModel)]="savedEndTime" type="date" name="savedEndTime">
+    </label>
+    <button (click)="reset()">Regenerate Schedule</button>
+</div>
+
+<!-- user can either download or regen schedule. 
+ follow the same format so if they don't want to download it, it can showup in dashboard maybe -->
+<ul type="none">
+
+</ul>
