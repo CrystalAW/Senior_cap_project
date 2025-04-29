@@ -39,18 +39,18 @@ def main():
 
   try:
     now = datetime.datetime.now(datetime.timezone.utc)
-    tomorrow_end = (now + datetime.timedelta(days=7)).replace(hour=23, minute=59, second=59)
-    time_max = tomorrow_end.isoformat()
-    #reset_schedule(creds, time_max)
-    #'''
+    week_end = (now + datetime.timedelta(days=7)).replace(hour=23, minute=59, second=59)
+    time_max = week_end.isoformat()
+    reset_schedule(creds, time_max)
+    '''
     task_service = build('tasks', 'v1', credentials=creds)
     allTasks = getTasks(task_service, time_max)
     taskswithTime = []
     for task in allTasks:
-      taskswithTime.append((task, 8))
-    addNotes = "I need to go to bed at midnight"
+      taskswithTime.append((task, 6))
+    addNotes = "I would like to get the senior seminar paper done before the internship write up"
     createSchedule(creds, taskswithTime, addNotes, time_max, tz = "America/New_York")
-    #'''
+    '''
   except HttpError as error:
         print(f"An error occurred: {error}")
 if __name__ == "__main__":
