@@ -5,10 +5,11 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
+    "restart": "\"npm run dev\" && \"npm run start:front\""
     "start": "node dist/bin/www.js",
     "dev": "nodemon --watch './**/*.ts' --exec ts-node-esm --project tsconfig.server.json ./bin/www.ts",
     "start:backend": "ts-node ./bin/www",
-    "start:frontend": "cd app_public/DigiP && npm start",
+    "start:frontend": "cd src/app_public/DigiP && npm start",
     "start:python": "python Algorithm/app.py"
   },
   "dependencies": {
