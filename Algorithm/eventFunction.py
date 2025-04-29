@@ -36,6 +36,7 @@ def createEvent(summary, location, description, start_datetime, end_datetime, ti
 #assumes we are getting a valid amount of hours
 #h is a float
 def createEventFromTask(eventService, taskService, task, h, startTime, timezone):
+    print(task)
     taskNotesSplit = task['notes'].split("###",1)
     event = {
         'summary': task['title'],
