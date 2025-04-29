@@ -15,8 +15,6 @@ export class TasklistComponent {
   bdNumbers: {[key: string]: number} = {};
   additionalNotes = '';
   totalTasks : Task[] = [];
-  // progress: Task[] = [];
-  // complete: Task[] = [];
 
 
   constructor(private calendarService: GoogleCalendarService, private scheduleService: ScheduleService) {}
@@ -25,6 +23,11 @@ export class TasklistComponent {
     this.calendarService.getTaskfromLists('primary').subscribe((tasks: Task[]) => {
       this.todo = tasks.filter(task => task.status === 'needsAction');
     });
+    this.refresh();
+  }
+
+  refresh() {
+
   }
 
   selectTask (event: Event) {
@@ -56,58 +59,35 @@ export class TasklistComponent {
     delete this.bdNumbers[taskId];
   }
 
-  // generate() {
-  //   const taskBDTupleList: TaskBDTuple [] = this.pickedTasks.map(task => {
-  //     return {
-  //       id: task.id,
-  //       bd_hours: this.bdNumbers[task.id] || 0
-  //     }
-  //   });
-    
-  //   console.log('Data to be sent to backend:', {
-  //     pickedTasks: this.pickedTasks,
-  //     bdNumbers: this.bdNumbers,
-  //     taskBDTupleList: taskBDTupleList,
-  //     additionalNotes: this.additionalNotes
-  //   });
-  //   this.scheduleService.getCredentials().subscribe(creds => {
-  //     const payload: schedPayload = {
-  //        creds,
-  //        taskBDTupleList,
-  //       additionalNotes: this.additionalNotes,
-  //       endTime: new Date().toISOString(),
-  //       tz: 'America/New_York'
-  //     };
-
-  //     this.scheduleService.generateSchedule(payload).subscribe({
-  //       next: (res) => {
-  //         console.log('Schedule created:', res);
-  //       },
-  //       error: (err) => {
-  //         console.error('Schedule creation error:', err);
-  //       },
-  //       complete: () => {
-  //         console.log('Request complete');
-  //       }
-  //     });
-  //   })
-  // }
-  
-
   generate() {
-    const taskBDTupleList: TaskBDTuple[] = this.todo.map(task => {
+    const taskBDTupleList: TaskBDTuple [] = this.pickedTasks.map(task => {
       return [
-        {
-          id: task.id,
+        {  id: task.id,
+          title: task.title,
+          notes: task.notes ?? '',
+          due: task.due,
+          status: task.status,
+          completed: task.completed,
+          updated: task.updated,
+          selfLink: task.selfLink,
+          parent: task.parent,
+          position: task.position
         },
-        6 as number
-      ] as TaskBDTuple;
+        this.bdNumbers[task.id]
+      ]
+    });
+    
+    console.log('Data to be sent to backend:', {
+      pickedTasks: this.pickedTasks,
+      bdNumbers: this.bdNumbers,
+      taskBDTupleList: taskBDTupleList,
+      additionalNotes: this.additionalNotes
     });
     this.scheduleService.getCredentials().subscribe(creds => {
       const payload: schedPayload = {
          creds,
          taskBDTupleList,
-        additionalNotes: 'I want to spread these hours out',
+        additionalNotes: this.additionalNotes,
         endTime: new Date().toISOString(),
         tz: 'America/New_York'
       };
@@ -125,4 +105,5 @@ export class TasklistComponent {
       });
     })
   }
+  
 }
