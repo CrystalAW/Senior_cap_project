@@ -38,13 +38,12 @@ def reset():
         # Extract data from POST request
         creds_dict = data.get('creds')
         endTime = data.get('endTime')
-        tz = data.get('tz', 'America/New_York')
 
         # Convert credentials dictionary to Google Credentials object
         creds = Credentials.from_authorized_user_info(info=creds_dict)
 
         # Call the scheduling function
-        createSchedule(creds, endTime, tz)
+        reset(creds, endTime)
 
         return jsonify({"status": "success", "message": "Schedule reset successfully."})
 
