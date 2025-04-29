@@ -45,6 +45,8 @@ export class AuthService {
   
     // Set the user data in both BehaviorSubject and localStorage
     setUser(user: User, token: string): void {
+      console.log('Setting user:', user);
+      console.log('Setting token:', token);
       this.userSubject.next(user);  // Set user in service state
       localStorage.setItem(this.TOKEN_KEY, token);  // Store token in localStorage
       localStorage.setItem(this.USER_KEY, JSON.stringify(user));  // Store user info in localStorage

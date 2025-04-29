@@ -14,17 +14,17 @@ const generateJWT = (user: IUser) => {
   const payload = {
     email: user.email,
     userId: user.googleId,
-    // Add other user data you want in the token
+    id: user._id,
   };
   
-  const secretKey = process.env.JWT_SECRET_KEY;
+  const secretKey = process.env.JWT_SECRET;
   
   if (!secretKey) {
-    throw new Error('JWT_SECRET_KEY is not defined in the environment variables');
+    throw new Error('JWT_SECRET is not defined in the environment variables');
   }
 
   const options: jwt.SignOptions = {
-    expiresIn: '1h',  // You can also use a number like 3600 for 1 hour
+    expiresIn: '1h',  
   };
   
   return jwt.sign(payload, secretKey, options);
@@ -36,10 +36,16 @@ const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
 
-  if (!token) return res.sendStatus(401); // No token
+  if (!token)  {
+    console.log('Couldnt find token');
+    return res.sendStatus(401); // No token
+    }
 
   jwt.verify(token, process.env.JWT_SECRET as string, (err, user) => {
-    if (err) return res.sendStatus(403); // Invalid token
+    if (err) {
+      console.log('Invalid token', err);
+      return res.sendStatus(403); // Invalid token
+    }
     req.user = user;
     next();
   });
@@ -47,8 +53,8 @@ const authenticateToken = (req, res, next) => {
 
 // Passport setup
 passport.use(new GoogleStrategy({
-    clientID: process.env.GOOGLE_CLIENT_ID as string, // Use your Google client ID
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET as string, // Use your Google client secret
+    clientID: process.env.GOOGLE_CLIENT_ID as string, 
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET as string, 
     callbackURL: 'http://localhost:3000/api/auth/google/callback', // Redirect URI
   },
   async (accessToken, refreshToken, profile, done) => {
@@ -119,7 +125,7 @@ router.get('/google/callback',
    }
 );
 
-const something = async (req, res, next) => {
+const checkUser = async (req, res, next) => {
   try {
     const user = await User.findById(req.user.id).select('-password'); // No password sent
     if (!user) {
@@ -132,6 +138,6 @@ const something = async (req, res, next) => {
 }
 
 // This is the protected route
-router.get('/me', authenticateToken, something);
+router.get('/me', authenticateToken, checkUser);
 
 export default router;

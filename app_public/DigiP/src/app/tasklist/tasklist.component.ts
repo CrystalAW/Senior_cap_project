@@ -56,25 +56,58 @@ export class TasklistComponent {
     delete this.bdNumbers[taskId];
   }
 
-  generate() {
-    const taskBDTupleList: TaskBDTuple [] = this.pickedTasks.map(task => {
-      return {
-        id: task.id,
-        bd_hours: this.bdNumbers[task.id] || 0
-      }
-    });
+  // generate() {
+  //   const taskBDTupleList: TaskBDTuple [] = this.pickedTasks.map(task => {
+  //     return {
+  //       id: task.id,
+  //       bd_hours: this.bdNumbers[task.id] || 0
+  //     }
+  //   });
     
-    console.log('Data to be sent to backend:', {
-      pickedTasks: this.pickedTasks,
-      bdNumbers: this.bdNumbers,
-      taskBDTupleList: taskBDTupleList,
-      additionalNotes: this.additionalNotes
+  //   console.log('Data to be sent to backend:', {
+  //     pickedTasks: this.pickedTasks,
+  //     bdNumbers: this.bdNumbers,
+  //     taskBDTupleList: taskBDTupleList,
+  //     additionalNotes: this.additionalNotes
+  //   });
+  //   this.scheduleService.getCredentials().subscribe(creds => {
+  //     const payload: schedPayload = {
+  //        creds,
+  //        taskBDTupleList,
+  //       additionalNotes: this.additionalNotes,
+  //       endTime: new Date().toISOString(),
+  //       tz: 'America/New_York'
+  //     };
+
+  //     this.scheduleService.generateSchedule(payload).subscribe({
+  //       next: (res) => {
+  //         console.log('Schedule created:', res);
+  //       },
+  //       error: (err) => {
+  //         console.error('Schedule creation error:', err);
+  //       },
+  //       complete: () => {
+  //         console.log('Request complete');
+  //       }
+  //     });
+  //   })
+  // }
+  
+
+  generate() {
+    const taskBDTupleList: TaskBDTuple[] = this.todo.map(task => {
+      return [
+        {
+          id: task.id,
+        },
+        6 as number
+      ] as TaskBDTuple;
     });
     this.scheduleService.getCredentials().subscribe(creds => {
       const payload: schedPayload = {
          creds,
          taskBDTupleList,
-        additionalNotes: this.additionalNotes,
+        additionalNotes: 'I want to spread these hours out',
         endTime: new Date().toISOString(),
         tz: 'America/New_York'
       };
@@ -92,5 +125,4 @@ export class TasklistComponent {
       });
     })
   }
-  
 }

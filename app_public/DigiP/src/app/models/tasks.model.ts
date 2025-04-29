@@ -10,4 +10,4 @@ export interface Task {
     parent?: string;
     position?: string;
 }
-export type TaskBDTuple = {id: string, bd_hours: number};
+export type TaskBDTuple = [Task, number];

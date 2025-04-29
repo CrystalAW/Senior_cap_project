@@ -14,6 +14,6 @@ export class AppComponent {
   ngOnInit(): void {
     //Check if the user is logged in when the app loads (from localStorage or backend)
     this.authService.checkLoggedInUser();
-    console.log( "Wel:", this.authService.checkLoggedInUser());
+    console.log( "Well:", this.authService.checkLoggedInUser());
   }
 }
