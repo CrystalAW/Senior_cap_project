@@ -41,7 +41,7 @@ def createSchedule(creds, taskBDTupleList, additionalNotes, endTime, tz):
     except HttpError as error:
         print(f"An error occurred: {error}")
 
-def reset(creds, endTime):
+def reset_schedule(creds, endTime):
     event_service = build("calendar", "v3", credentials=creds)
     now = datetime.datetime.now(datetime.timezone.utc).isoformat()
 
