@@ -39,9 +39,13 @@ const authenticateToken = (req, res, next) => {
   if (!token)  {
     console.log('Couldnt find token');
     return res.sendStatus(401); // No token
-    }
+  }
 
   jwt.verify(token, process.env.JWT_SECRET as string, (err, user) => {
+    if (err && err.name === 'TokenExpiredError') {
+      console.log('Token expired');
+      return res.status(401).json({ message: 'Token expired. Please login again.' });
+    }
     if (err) {
       console.log('Invalid token', err);
       return res.sendStatus(403); // Invalid token
@@ -50,6 +54,7 @@ const authenticateToken = (req, res, next) => {
     next();
   });
 };
+
 
 // Passport setup
 passport.use(new GoogleStrategy({

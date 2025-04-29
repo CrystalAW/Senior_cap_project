@@ -68,7 +68,14 @@ export class AuthService {
                 this.setUser(response.user, token);
               }
             }, error => {
-              console.error('Failed to fetch user', error);
+              if (error.status === 401) {
+                // Handle expired token (token is no longer valid)
+                console.error('Token expired. Redirecting to login.');
+                this.logout();  // Logout the user
+                window.location.href = '/login';  // Redirect to login page
+            } else {
+                console.error('Failed to fetch user', error);
+            }
             });
         }
       }

@@ -67,3 +67,7 @@ token.json
 .DS_Store
 Thumbs.db
 .env
+
+.angular/
+dist/
+node_modules/
