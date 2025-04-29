@@ -18,14 +18,17 @@ def gptPrompt(text):
 
 #functions to build my input from what I have already
 #This is the base function for everything I will do with prompts
-def buildPrompt(eventStr, taskBDStr, additionalNotes):
+def buildPrompt(eventStr, taskBDStr, additionalNotes, currentTime):
     prompt = "Can you build a schedule based off of the following events:\n"
     prompt += eventStr
     prompt += "\nAnd the following tasks with the amount of time associated with them:\n"
     prompt += taskBDStr
     prompt += "\nand these (if listed), additional requirements:\n"
     prompt += additionalNotes
-    prompt += "\nin this format for only the new events created for the tasks, with the tasks distributed through out the day without overlapping preexisting events\n"
+    prompt += "\nWith no events from tasks starting before the current time of:"
+    prompt += currentTime
+    prompt += "\nwith the tasks distributed through out the day without overlapping any preexisting or newly created events, making sure that all events are done before the task's due date and time. "
+    prompt += "in this format for only the new events created for the tasks:\n"
     prompt += "[Task Name (dirrect from the string)],[duration of task block as an int],[startTime of specific task block in proper time zone definition for google calendar],,"
     prompt += "\nAnd only output that part on the same line"
     return prompt
@@ -74,10 +77,10 @@ def lexOutput(output, eventService, taskService, tasks, tz):
     currentTask = None
     for entry in entries:
         title, hours, start = entry.split(",")
-        hoursInt = int(hours)
+        hoursF = float(hours)
         title = "##BD##" + title
         for task in tasks:
             if task.get('title') == title:
                 currentTask = taskService.tasks().get(tasklist="@default", task=task['id']).execute() 
-        createEventFromTask(eventService, taskService, currentTask, hoursInt, start, tz)
+        createEventFromTask(eventService, taskService, currentTask, hoursF, start, tz)
         #find the corresponding task name:

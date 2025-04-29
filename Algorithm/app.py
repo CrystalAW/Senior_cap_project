@@ -30,5 +30,26 @@ def schedule_tasks():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
+@app.route('/reset', methods=['POST'])
+def reset():
+    data = request.get_json()
+
+    try:
+        # Extract data from POST request
+        creds_dict = data.get('creds')
+        endTime = data.get('endTime')
+        tz = data.get('tz', 'America/New_York')
+
+        # Convert credentials dictionary to Google Credentials object
+        creds = Credentials.from_authorized_user_info(info=creds_dict)
+
+        # Call the scheduling function
+        createSchedule(creds, endTime, tz)
+
+        return jsonify({"status": "success", "message": "Schedule reset successfully."})
+
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
 if __name__ == '__main__':
     app.run(debug=True)
