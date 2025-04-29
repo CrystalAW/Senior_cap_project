@@ -35,8 +35,17 @@ def createSchedule(creds, taskBDTupleList, additionalNotes, endTime, tz):
         eventStr = listEventsAsString(events)
         tasks = getTasks(task_service, endTime)
         taskStr = listTasksAsStringBD(tasks)
-        thePrompt = buildPrompt(eventStr, taskStr, additionalNotes) 
+        thePrompt = buildPrompt(eventStr, taskStr, additionalNotes, now)
         output = gptPrompt(thePrompt)
         lexOutput(output, event_service, task_service, tasks, tz)
     except HttpError as error:
         print(f"An error occurred: {error}")
+
+def reset(creds, endTime, tz):
+    event_service = build("calendar", "v3", credentials=creds)
+    now = datetime.datetime.now(datetime.timezone.utc).isoformat()
+
+    events = getEvents(event_service, endTime, now)
+    for event in events:
+        if event["summary"].startswith("##BD##"):
+            event_service.events().delete(calendarId='primary', eventId=event['id']).execute()
