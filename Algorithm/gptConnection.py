@@ -79,11 +79,8 @@ def lexOutput(output, eventService, taskService, tasks, tz):
         title, hours, start = entry.split(",")
         hoursF = float(hours)
         title = "##BD##" + title
-        print(title)
         for task in tasks:
             if task.get('title') == title:
                 currentTask = taskService.tasks().get(tasklist="@default", task=task['id']).execute()
-                print(currentTask) 
-                print("*")
         createEventFromTask(eventService, taskService, currentTask, hoursF, start, tz)
         #find the corresponding task name:
