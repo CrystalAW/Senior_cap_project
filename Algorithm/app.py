@@ -51,6 +51,10 @@ def resetSchedule():
 
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
+    
+@app.route("/ping")
+def ping():
+    return "pong"
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
