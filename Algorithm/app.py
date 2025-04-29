@@ -3,7 +3,7 @@ import datetime
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from google.oauth2.credentials import Credentials
-from script import createSchedule
+from script import *
 
 app = Flask(__name__)
 CORS(app)  # Allows cross-origin requests
@@ -32,7 +32,7 @@ def schedule_tasks():
         return jsonify({"status": "error", "message": str(e)}), 500
 
 @app.route('/reset', methods=['POST'])
-def reset():
+def resetSchedule():
     data = request.get_json()
 
     try:
@@ -44,8 +44,8 @@ def reset():
         # Convert credentials dictionary to Google Credentials object
         creds = Credentials.from_authorized_user_info(info=creds_dict)
 
-        # Call the scheduling function
-        reset(creds, endTime)
+        # Call the reset function
+        reset_schedule(creds, endTime)
 
         return jsonify({"status": "success", "message": "Schedule reset successfully."})
 

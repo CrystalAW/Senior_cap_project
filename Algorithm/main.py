@@ -41,7 +41,7 @@ def main():
     now = datetime.datetime.now(datetime.timezone.utc)
     tomorrow_end = (now + datetime.timedelta(days=7)).replace(hour=23, minute=59, second=59)
     time_max = tomorrow_end.isoformat()
-    reset(creds, time_max, "America/New_York")
+    reset_schedule(creds, time_max)
     '''
     task_service = build('tasks', 'v1', credentials=creds)
     allTasks = getTasks(task_service, time_max)
