@@ -36,7 +36,9 @@ def createSchedule(creds, taskBDTupleList, additionalNotes, endTime, tz):
         tasks = getTasks(task_service, endTime)
         taskStr = listTasksAsStringBD(tasks)
         thePrompt = buildPrompt(eventStr, taskStr, additionalNotes, now)
+        print(thePrompt)
         output = gptPrompt(thePrompt)
+        print(output)
         lexOutput(output, event_service, task_service, tasks, tz)
     except HttpError as error:
         print(f"An error occurred: {error}")
