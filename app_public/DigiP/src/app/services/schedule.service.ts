@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map, Observable, switchMap } from 'rxjs';
-import { googleCreds, schedPayload } from './models/creds.model';
-import { Task } from './models/tasks.model';
+import { googleCreds, schedPayload } from '../models/creds.model';
+import { Task } from '../models/tasks.model';
 
 
 type TaskBDTuple = [Task, number];

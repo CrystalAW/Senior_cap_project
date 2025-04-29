@@ -12,6 +12,7 @@ CORS(app)  # Allows cross-origin requests
 def schedule_tasks():
     data = request.get_json()
     try:
+        print('Received payload:', data)
         # Extract data from POST request
         creds_dict = data.get('creds')
         taskBDTupleList = data.get('taskBDTupleList')

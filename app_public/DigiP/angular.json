@@ -19,6 +19,7 @@
             "polyfills": [
               "zone.js"
             ],
+            "allowedCommonJsDependencies": ["core-js"],
             "tsConfig": "tsconfig.app.json",
             "assets": [
               "src/favicon.ico",

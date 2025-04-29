@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { GoogleCalendarService } from '../google-calendar.service';
-import { ScheduleService } from '../schedule.service';
+import { GoogleCalendarService } from '../services/google-calendar.service';
+import { ScheduleService } from '../services/schedule.service';
 
 @Component({
   selector: 'app-schedule',
@@ -11,6 +11,8 @@ import { ScheduleService } from '../schedule.service';
 })
 export class ScheduleComponent {
   events: any[] = [];
+  tasks: any[] = [];
+  combined: any[] = [];
   filteredEvents: any[] = [];
   viewMode: 'table' | 'list' = 'table';
   timeFilter: 'all' | 'day' | 'week' | 'month' = 'all';
@@ -20,25 +22,56 @@ export class ScheduleComponent {
   constructor(private calService: GoogleCalendarService, private scheduleService: ScheduleService) {}
 
   ngOnInit() {
+    this.calService.getTaskfromLists('primary').subscribe(tasks => {
+      this.tasks = tasks.map(task => ({ ...task, type: 'task' }));
+      this.checkArrays()
+    });
     this.calService.getEvents().subscribe(events => {
-      this.events = events.sort((a: any, b: any) =>
+      this.events = events
+      .map((event: any) => ({ ...event, type: 'event' }))
+      .sort((a: any, b: any) =>
         new Date(a.start.dateTime).getTime() - new Date(b.start.dateTime).getTime()
       );
-      this.filterEvents();
+      this.checkArrays();
     });
+  }
+
+  checkArrays() {
+    this.updateCombArray();
+      this.filterEvents();
+      console.log("combined array:", this.filteredEvents);
+  }
+  updateCombArray() {
+    this.combined = [...this.events, ...this.tasks];
+
+  //Sorting events vs task
+  this.combined.sort((a: any, b: any) => {
+    const aDate = a.type === 'event' ? new Date(a.start.dateTime) : new Date(a.due);
+    const bDate = b.type === 'event' ? new Date(b.start.dateTime) : new Date(b.due);
+    return aDate.getTime() - bDate.getTime();
+  });
   }
 
   filterEvents() {
     const selected = new Date(this.selectedDate);
     selected.setHours(0, 0, 0, 0);
 
-    this.filteredEvents = this.events.filter(event => {
-      const start = new Date(event.start.dateTime);
+    this.filteredEvents = this.combined.filter(item => {
+      let itemDate: Date;
+
+      if (item.type === 'event') {
+        itemDate = new Date(item.start.dateTime);
+      } else if (item.type === 'task') {
+        if (!item.due) return false;
+        itemDate = new Date(item.due);
+      } else {
+        return false;
+      }
 
       if (this.timeFilter === 'day') {
         const nextDay = new Date(selected);
         nextDay.setDate(nextDay.getDate() + 1);
-        return start >= selected && start < nextDay;
+        return itemDate >= selected && itemDate < nextDay;
       }
 
       if (this.timeFilter === 'week') {
@@ -47,17 +80,23 @@ export class ScheduleComponent {
 
         const endOfWeek = new Date(startOfWeek);
         endOfWeek.setDate(startOfWeek.getDate() + 7);
-        return start >= startOfWeek && start < endOfWeek;
+        return itemDate >= startOfWeek && itemDate < endOfWeek;
       }
 
       if (this.timeFilter === 'month') {
         return (
-          start.getFullYear() === selected.getFullYear() &&
-          start.getMonth() === selected.getMonth()
+          itemDate.getFullYear() === selected.getFullYear() &&
+          itemDate.getMonth() === selected.getMonth()
         );
       }
 
       return true;
+    });
+    // extra sorrting just incase
+    this.filteredEvents.sort((a: any, b: any) => {
+      const aDate = a.type === 'event' ? new Date(a.start.dateTime) : new Date(a.due);
+      const bDate = b.type === 'event' ? new Date(b.start.dateTime) : new Date(b.due);
+      return aDate.getTime() - bDate.getTime();
     });
   }
 
@@ -83,37 +122,25 @@ export class ScheduleComponent {
     return `${dateStr} ${formatTime(startDate)} - ${formatTime(endDate)}`;
   }
 
-  //need to add something for the tasks here instead maybe
-
-  // createEvent(eventFormData: any) {
-  //   const newEvent = {
-  //     summary: eventFormData.title,
-  //     description: eventFormData.description,
-  //     start: {
-  //       dateTime: new Date(eventFormData.start).toISOString(),
-  //       timeZone: 'America/New_York',
-  //     },
-  //     end: {
-  //       dateTime: new Date(eventFormData.end).toISOString(),
-  //       timeZone: 'America/New_York',
-  //     },
-  //   };
-  
-  //   this.calService.addEvent(newEvent).subscribe({
-  //     next: () => console.log('Event created'),
-  //     error: (err) => console.error('Failed to create event', err)
-  //   });
-  // }
-  
-
+  formatTaskDate(due: string): string {
+    const date = new Date(due);
+    return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear().toString().slice(-2)}`;
+  }
 
   exportCSV() {
-    const headers = ['Title', 'Date & Time', 'Description'];
-    const rows = this.filteredEvents.map(event => [
-      event.summary,
-      this.formatEventDate(event.start.dateTime, event.end.dateTime),
-      event.description || ''
-    ]);
+    const headers = ['Title', 'Date & Time', 'Description/Status'];
+    const rows = this.filteredEvents.map(item => {
+      const title = item.type === 'event' ? item.summary : item.title;
+      const dateTime = item.type === 'event'
+        ? this.formatEventDate(item.start.dateTime, item.end.dateTime)
+        : this.formatTaskDate(item.due);
+      const descriptionOrStatus = item.type === 'event'
+        ? (item.description || '')
+        : (item.status === 'needsAction' ? 'Not Started' : (item.status || ''));
+  
+      return [title, dateTime, descriptionOrStatus];
+    });
+  
     const csvContent = [headers, ...rows]
       .map(e => e.map(v => `"${v}"`).join(','))
       .join('\n');
@@ -133,14 +160,20 @@ export class ScheduleComponent {
     doc.setFontSize(18);
     doc.text('Schedule Export', 14, 15);
 
-    const tableData = this.filteredEvents.map(event => [
-      event.summary,
-      this.formatEventDate(event.start.dateTime, event.end.dateTime),
-      event.description || ''
-    ]);
+    const tableData = this.filteredEvents.map(item => {
+      const title = item.type === 'event' ? item.summary : item.title;
+      const dateTime = item.type === 'event'
+        ? this.formatEventDate(item.start.dateTime, item.end.dateTime)
+        : this.formatTaskDate(item.due);
+      const descriptionOrStatus = item.type === 'event'
+        ? (item.description || '')
+        : (item.status === 'needsAction' ? 'Not Started' : (item.status || ''));
+  
+      return [title, dateTime, descriptionOrStatus];
+    });
 
     autoTable(doc, {
-      head: [['Summary', 'Date & Time', 'Description']],
+      head: [['Title', 'Date', 'Description/Status']],
       body: tableData,
       startY: 25,
       styles: { fontSize: 10, cellPadding: 3 },

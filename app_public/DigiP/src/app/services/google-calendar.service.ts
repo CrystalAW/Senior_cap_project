@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { TaskList } from './models/tasklist.model';
-import { Task } from './models/tasks.model';
+import { TaskList } from '../models/tasklist.model';
+import { Task } from '../models/tasks.model';
 
 @Injectable({
   providedIn: 'root'
@@ -21,9 +21,11 @@ export class GoogleCalendarService {
   addEvent(event: any): Observable<any> {
     return this.http.post<any>(this.calUrl, event);
   }
-  sendPayload() {
-    
+  
+  deleteEvent() {
+
   }
+  
   //taskslists api methods
   getTaskLists(): Observable<TaskList[]> {
     return this.http.get<TaskList[]>(`${this.taskUrl}/tasklists`);
