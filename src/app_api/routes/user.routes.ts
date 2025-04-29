@@ -24,7 +24,7 @@ const generateJWT = (user: IUser) => {
   }
 
   const options: jwt.SignOptions = {
-    expiresIn: '1h',  
+    expiresIn: '10h',  
   };
   
   return jwt.sign(payload, secretKey, options);

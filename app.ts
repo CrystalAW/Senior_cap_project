@@ -9,15 +9,15 @@ import passport from 'passport';
 import path from 'path';
  dotenv.config();
 
-import calRouter from './app_api/routes/calRoutes.js';
-import taskRouter from './app_api/routes/taskRoutes.js';
-import authRoutes from './app_api/routes/user.routes.js';
+import calRouter from './src/app_api/routes/calRoutes.js';
+import taskRouter from './src/app_api/routes/taskRoutes.js';
+import authRoutes from './src/app_api/routes/user.routes.js';
 
 
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { readSavedcreds } from './app_api/controllers/googleCalService.js';
-import './app_api/models/_db.js';
+import { readSavedcreds } from './src/app_api/controllers/googleCalService.js';
+import './src/app_api/models/_db.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -25,7 +25,7 @@ const __dirname = dirname(__filename);
 const app = express();
 
 // view engine setup
-app.set('views', path.join(__dirname, 'app_server', 'views'));
+app.set('views', path.join(__dirname, 'src', 'app_server', 'views'));
 app.set('view engine', 'pug');
 
 app.use('*' ,cors({
@@ -51,7 +51,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 //app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.static(path.join(__dirname, 'app_public', 'dist', 'digi-p', 'browser')));
+app.use(express.static(path.join(__dirname, 'src', 'app_public', 'dist', 'digi-p', 'browser')));
 
 app.use(session({
   secret: process.env.SESSION_SECRET as string,
@@ -79,7 +79,7 @@ app.get('/api/creds', async (req, res) => {
 
 app.get('*', (req: Request, res:Response, next: NextFunction) => {
   if(req.path !== '/api') {
-    res.sendFile(path.join(__dirname, 'app_public', 'dist','digi-p', 'browser', 'index.html'));
+    res.sendFile(path.join(__dirname, 'src','app_public', 'dist','digi-p', 'browser', 'index.html'));
   } else {
     next();
   }

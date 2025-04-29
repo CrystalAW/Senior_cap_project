@@ -5,10 +5,9 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "restart": "\"npm run dev\" && \"npm run start:front\""
-    "start": "node dist/bin/www.js",
-    "dev": "nodemon --watch './**/*.ts' --exec ts-node-esm --project tsconfig.server.json ./bin/www.ts",
-    "start:backend": "ts-node ./bin/www",
+    "start": "concurrently \"npm run dev\" \"npm run start:python\" \"npm run start:frontend\"",
+    "dev": "nodemon --watch './**/*.ts' --exec ts-node-esm --project tsconfig.server.json src/bin/www.ts",
+    "start:backend": "ts-node ./src/bin/www",
     "start:frontend": "cd src/app_public/DigiP && npm start",
     "start:python": "python Algorithm/app.py"
   },

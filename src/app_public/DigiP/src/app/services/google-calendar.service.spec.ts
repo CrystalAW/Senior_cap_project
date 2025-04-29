@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { GoogleCalendarService } from '../google-calendar.service';
+import { GoogleCalendarService } from './google-calendar.service';
 
 describe('GoogleCalendarService', () => {
   let service: GoogleCalendarService;
