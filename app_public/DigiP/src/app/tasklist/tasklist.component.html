@@ -25,6 +25,9 @@
       </div>
     </div>
 
+    <label>Deadline for set of tasks:
+        <input [(ngModel)]="endTime" type="date" name="endTime">
+    </label>
     <label>
       Additional notes:<br>
       <textarea [(ngModel)]="additionalNotes" name="additionalNotes"></textarea>
@@ -43,6 +46,10 @@
     <ol *ngFor="let item of todo">
         <li>{{item.title}}</li>
     </ol>
+    <label>Reaffirm endTime:
+        <input [(ngModel)]="savedEndTime" type="date" name="savedEndTime">
+    </label>
+    <button (click)="reset()">Regenerate Schedule</button>
 </div>
 
 <!-- user can either download or regen schedule. 

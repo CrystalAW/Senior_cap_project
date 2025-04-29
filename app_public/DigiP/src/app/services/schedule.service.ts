@@ -10,7 +10,8 @@ type TaskBDTuple = [Task, number];
   providedIn: 'root'
 })
 export class ScheduleService {
-  private pyUrl = 'http://localhost:5000/schedule';
+  private pyUrl = 'http://localhost:5000';
+
   private credUrl = '/api/creds';
 
   constructor(private http: HttpClient) { }
@@ -22,7 +23,14 @@ export class ScheduleService {
   generateSchedule(payload: schedPayload): Observable<any> {
     return this.http.get<googleCreds>(this.credUrl).pipe(
       map(creds => ({...payload, creds} as schedPayload)),
-      switchMap(fullpayload => this.http.post<any>(this.pyUrl, fullpayload))
+      switchMap(fullpayload => this.http.post<any>(`${this.pyUrl}/schedule`, fullpayload))
       );
+  }
+
+  regenerateSchedule(payload: schedPayload): Observable<any> {
+    return this.http.get<googleCreds>(this.credUrl).pipe(
+      map(creds => ({...payload, creds} as schedPayload)),
+      switchMap(fullpayload => this.http.post<any>(`${this.pyUrl}/reset`, fullpayload))
+    );
   }
 }

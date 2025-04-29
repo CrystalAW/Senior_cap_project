@@ -36,6 +36,7 @@ def reset():
     data = request.get_json()
 
     try:
+        print('Received payload:', data)
         # Extract data from POST request
         creds_dict = data.get('creds')
         endTime = data.get('endTime')
