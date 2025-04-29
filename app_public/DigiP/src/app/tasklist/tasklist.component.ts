@@ -18,22 +18,22 @@ export class TasklistComponent {
   savedEndTime = '';
   totalTasks : Task[] = [];
 
-   taskBDTupleList: TaskBDTuple [] = this.pickedTasks.map(task => {
-    return [
-      {  id: task.id,
-        title: task.title,
-        notes: task.notes ?? '',
-        due: task.due,
-        status: task.status,
-        completed: task.completed,
-        updated: task.updated,
-        selfLink: task.selfLink,
-        parent: task.parent,
-        position: task.position
-      },
-      this.bdNumbers[task.id]
-    ]
-  });
+  //  taskBDTupleList: TaskBDTuple [] = this.pickedTasks.map(task => {
+  //   return [
+  //     {  id: task.id,
+  //       title: task.title,
+  //       notes: task.notes ?? '',
+  //       due: task.due,
+  //       status: task.status,
+  //       completed: task.completed,
+  //       updated: task.updated,
+  //       selfLink: task.selfLink,
+  //       parent: task.parent,
+  //       position: task.position
+  //     },
+  //     this.bdNumbers[task.id]
+  //   ]
+  // });
 
   constructor(private calendarService: GoogleCalendarService, private scheduleService: ScheduleService) {}
 
@@ -78,17 +78,35 @@ export class TasklistComponent {
 
   generate() {
     
+
+    const taskBDTupleList: TaskBDTuple [] = this.pickedTasks.map(task => {
+      return [
+        {  id: task.id,
+          title: task.title,
+          notes: task.notes ?? '',
+          due: task.due,
+          status: task.status,
+          completed: task.completed,
+          updated: task.updated,
+          selfLink: task.selfLink,
+          parent: task.parent,
+          position: task.position
+        },
+        this.bdNumbers[task.id]
+      ]
+    });
+    
     console.log('Data to be sent to backend:', {
       pickedTasks: this.pickedTasks,
       bdNumbers: this.bdNumbers,
-      taskBDTupleList: this.taskBDTupleList,
+      taskBDTupleList,
       additionalNotes: this.additionalNotes
     });
-    
+
     this.scheduleService.getCredentials().subscribe(creds => {
       const payload: schedPayload = {
          creds,
-         taskBDTupleList: this.taskBDTupleList,
+         taskBDTupleList,
         additionalNotes: this.additionalNotes,
         endTime: new Date(this.endTime).toISOString(),
         tz: 'America/New_York'
@@ -106,6 +124,7 @@ export class TasklistComponent {
         }
       });
     });
+
     this.refresh();
   }
   
