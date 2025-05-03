@@ -17,7 +17,7 @@ export class ScheduleComponent {
   viewMode: 'table' | 'list' = 'table';
   timeFilter: 'all' | 'day' | 'week' | 'month' = 'all';
 
-  selectedDate: Date = new Date(); // You can bind this to a datepicker later
+  selectedDate: Date = new Date();
 
   constructor(private calService: GoogleCalendarService, private scheduleService: ScheduleService) {}
 
