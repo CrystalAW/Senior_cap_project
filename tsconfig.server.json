@@ -1,9 +1,8 @@
-// tsconfig.server.json
 {
   "compilerOptions": {
     "baseUrl": ".",
     "target": "ES2020",
-    "module": "ESNext",
+    "module": "CommonJS",
     "moduleResolution": "Node",
     "esModuleInterop": true,
     "resolveJsonModule": true,
