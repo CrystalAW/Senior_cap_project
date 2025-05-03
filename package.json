@@ -6,10 +6,14 @@
   "scripts": {
     "build": "tsc",
     "start": "concurrently \"npm run dev\" \"npm run start:python\" \"npm run start:frontend\"",
-    "dev": "nodemon --watch './**/*.ts' --exec ts-node-esm --project tsconfig.server.json src/bin/www.ts",
-    "start:backend": "ts-node ./src/bin/www",
+    "dev": "nodemon --watch './**/*.ts' --exec ts-node --project tsconfig.server.json src/bin/www.ts",
+    "start:backend": "ts-node-esm ./src/bin/www",
     "start:frontend": "cd src/app_public/DigiP && npm start",
-    "start:python": "python Algorithm/app.py"
+    "start:python": "python Algorithm/app.py",
+    "start:node": "node dist/bin/www.js"
+  },
+  "engines": {
+    "node": "18.x"
   },
   "dependencies": {
     "@google-cloud/local-auth": "^2.1.0",
