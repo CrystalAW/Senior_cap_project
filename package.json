@@ -7,7 +7,7 @@
     "build": "tsc",
     "postinstall": "npm install --only=dev",
     "start": "concurrently \"npm run dev\" \"npm run start:python\" \"npm run start:frontend\"",
-    "dev": "ts-node --project tsconfig.server.json src/bin/www.ts",
+    "dev": "tsc --project tsconfig.server.json src/bin/www.ts",
     "start:backend": "ts-node-esm ./src/bin/www",
     "start:frontend": "cd src/app_public/DigiP && npm start",
     "start:python": "python Algorithm/app.py",
