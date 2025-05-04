@@ -2,9 +2,7 @@
 {
   "compilerOptions": {
     "baseUrl": "./",
-    "paths": {
-      "src/*": ["src/*"]
-    },
+    "checkJs": true,
     "target": "ES2022",
     "module": "ESNext",
     "moduleResolution": "Node",
