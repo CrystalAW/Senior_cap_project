@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
+    "postinstall": "npm install --save-dev ts-node typescript",
     "start": "concurrently \"npm run dev\" \"npm run start:python\" \"npm run start:frontend\"",
     "dev": "nodemon --watch './**/*.ts' --exec ts-node --project tsconfig.json src/bin/www.ts",
     "start:backend": "ts-node-esm ./src/bin/www",
