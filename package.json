@@ -24,6 +24,7 @@
     "express": "~4.16.1",
     "express-session": "^1.18.1",
     "googleapis": "^105.0.0",
+    "ts-node": "^10.9.2",
     "http-errors": "~1.6.3",
     "jsonwebtoken": "^9.0.2",
     "moment-timezone": "^0.5.48",
@@ -50,7 +51,6 @@
     "@types/passport-google-oauth20": "^2.0.16",
     "concurrently": "^9.1.2",
     "nodemon": "^3.1.9",
-    "ts-node": "^10.9.2",
     "tsx": "^4.19.3",
     "typescript": "^5.8.3"
   }
