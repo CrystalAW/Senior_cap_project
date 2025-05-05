@@ -6,18 +6,27 @@ import session from 'express-session';
 import createError from 'http-errors';
 import logger from 'morgan';
 import passport from 'passport';
-import path from 'path';
-dotenv.config();
-import calRouter from './app_api/routes/calRoutes.js';
-import taskRouter from './app_api/routes/taskRoutes.js';
-import authRoutes from './app_api/routes/user.routes.js';
-import { dirname } from 'path';
+import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { readSavedcreds } from './app_api/controllers/googleCalService.js';
-import './app_api/models/_db.js';
+import { readSavedcreds } from './dist/app_api/controllers/googleCalService.js';
+import './dist/app_api/models/_db.js';
+import calRouter from './dist/app_api/routes/calRoutes.js';
+import taskRouter from './dist/app_api/routes/taskRoutes.js';
+import authRoutes from './dist/app_api/routes/user.routes.js';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const app = express();
+
+dotenv.config();
+
+mongoose.connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log(' MongoDB connected'))
+  .catch(err => console.error(' MongoDB connection error:', err));
+
 // view engine setup
 app.set('views', path.join(__dirname, 'app_server', 'views'));
 app.set('view engine', 'pug');
