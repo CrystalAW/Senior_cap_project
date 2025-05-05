@@ -51,10 +51,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 //app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.static(path.join(__dirname, 'src', 'app_public', 'DigiP', 'dist', 'digi-p', 'browser')));
+//app.use(express.static(path.join(__dirname, 'src', 'app_public', 'DigiP', 'dist', 'digi-p', 'browser')));
 //app.use(express.static(path.join(__dirname, './src/app_public/dist/digi-p')));
-const angularDistPath = path.resolve(__dirname, '../app_public/DigiP/dist/digi-p');
-app.use(express.static(angularDistPath));
+//const angularDistPath = path.resolve(__dirname, '../app_public/DigiP/dist/digi-p');
+//app.use(express.static(angularDistPath));
 app.use(session({
   secret: process.env.SESSION_SECRET as string,
   resave: false,
@@ -87,13 +87,13 @@ app.get('/api/creds', async (req, res) => {
 //   }
 // });
 
-app.get('*', (req: Request, res:Response, next: NextFunction) => {
-  if(req.path !== '/api') {
-    res.sendFile(path.join(angularDistPath, 'index.html'));
-  } else {
-    next();
-  }
-});
+// app.get('*', (req: Request, res:Response, next: NextFunction) => {
+//   if(req.path !== '/api') {
+//     res.sendFile(path.join(angularDistPath, 'index.html'));
+//   } else {
+//     next();
+//   }
+// });
 // catch 404 and forward to error handler
 app.use(function(req: Request, res: Response, next: NextFunction) {
   next(createError(404));
