@@ -6,7 +6,7 @@
 
 import debug from 'debug';
 import http from 'http';
-import app from '../../app.ts';
+import app from '../app';
 
 /**
  * Get port from environment and store in Express.

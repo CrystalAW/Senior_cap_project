@@ -1,38 +1,33 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const cookie_parser_1 = __importDefault(require("cookie-parser"));
-const cors_1 = __importDefault(require("cors"));
-const dotenv_1 = __importDefault(require("dotenv"));
-const express_1 = __importDefault(require("express"));
-const express_session_1 = __importDefault(require("express-session"));
-const http_errors_1 = __importDefault(require("http-errors"));
-const morgan_1 = __importDefault(require("morgan"));
-const passport_1 = __importDefault(require("passport"));
-const path_1 = __importDefault(require("path"));
-dotenv_1.default.config();
-const calRoutes_js_1 = __importDefault(require("./src/app_api/routes/calRoutes.js"));
-const taskRoutes_js_1 = __importDefault(require("./src/app_api/routes/taskRoutes.js"));
-const user_routes_js_1 = __importDefault(require("./src/app_api/routes/user.routes.js"));
-const path_2 = require("path");
-const url_1 = require("url");
-const googleCalService_js_1 = require("./src/app_api/controllers/googleCalService.js");
-require("./src/app_api/models/_db.ts");
-const __filename = (0, url_1.fileURLToPath)(import.meta.url);
-const __dirname = (0, path_2.dirname)(__filename);
-const app = (0, express_1.default)();
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import express from 'express';
+import session from 'express-session';
+import createError from 'http-errors';
+import logger from 'morgan';
+import passport from 'passport';
+import path from 'path';
+dotenv.config();
+import calRouter from './src/app_api/routes/calRoutes.js';
+import taskRouter from './src/app_api/routes/taskRoutes.js';
+import authRoutes from './src/app_api/routes/user.routes.js';
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
+import { readSavedcreds } from './src/app_api/controllers/googleCalService.js';
+import './src/app_api/models/_db.ts';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const app = express();
 // view engine setup
-app.set('views', path_1.default.join(__dirname, 'src', 'app_server', 'views'));
+app.set('views', path.join(__dirname, 'src', 'app_server', 'views'));
 app.set('view engine', 'pug');
-app.use('*', (0, cors_1.default)({
+app.use('*', cors({
     origin: 'http://localhost:4200',
     methods: ['GET', 'POST', 'OPTIONS'],
     credentials: true,
 }));
-app.use((0, morgan_1.default)('dev'));
-app.use(express_1.default.json());
+app.use(logger('dev'));
+app.use(express.json());
 // app.use(function(req: Request, res: Response, next: NextFunction) {
 //   res.setHeader("Access-Control-Allow-Origin", "*");
 //   res.setHeader(
@@ -45,23 +40,26 @@ app.use(express_1.default.json());
 //   );
 //   next();
 // })
-app.use(express_1.default.urlencoded({ extended: false }));
-app.use((0, cookie_parser_1.default)());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
 //app.use(express.static(path.join(__dirname, 'public')));
-app.use(express_1.default.static(path_1.default.join(__dirname, 'src', 'app_public', 'dist', 'digi-p', 'browser')));
-app.use((0, express_session_1.default)({
+app.use(express.static(path.join(__dirname, 'src', 'app_public', 'DigiP', 'dist', 'digi-p', 'browser')));
+//app.use(express.static(path.join(__dirname, './src/app_public/dist/digi-p')));
+const angularDistPath = path.resolve(__dirname, '../app_public/DigiP/dist/digi-p');
+app.use(express.static(angularDistPath));
+app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
 }));
-app.use(passport_1.default.initialize());
-app.use(passport_1.default.session());
-app.use('/api/auth', user_routes_js_1.default);
-app.use('/api/calendar', calRoutes_js_1.default);
-app.use('/api/tasks', taskRoutes_js_1.default);
+app.use(passport.initialize());
+app.use(passport.session());
+app.use('/api/auth', authRoutes);
+app.use('/api/calendar', calRouter);
+app.use('/api/tasks', taskRouter);
 app.get('/api/creds', async (req, res) => {
     try {
-        const creds = await (0, googleCalService_js_1.readSavedcreds)();
+        const creds = await readSavedcreds();
         res.json(creds);
     }
     catch (err) {
@@ -69,9 +67,16 @@ app.get('/api/creds', async (req, res) => {
         res.status(500).json({ error: 'Failed to load valid credentials' });
     }
 });
+// app.get('*', (req: Request, res:Response, next: NextFunction) => {
+//   if(req.path !== '/api') {
+//     res.sendFile(path.join(__dirname, 'src','app_public', 'dist','digi-p', 'browser', 'index.html'));
+//   } else {
+//     next();
+//   }
+// });
 app.get('*', (req, res, next) => {
     if (req.path !== '/api') {
-        res.sendFile(path_1.default.join(__dirname, 'src', 'app_public', 'dist', 'digi-p', 'browser', 'index.html'));
+        res.sendFile(path.join(angularDistPath, 'index.html'));
     }
     else {
         next();
@@ -79,7 +84,7 @@ app.get('*', (req, res, next) => {
 });
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
-    next((0, http_errors_1.default)(404));
+    next(createError(404));
 });
 // error handler
 app.use(function (err, req, res, next) {
@@ -90,4 +95,4 @@ app.use(function (err, req, res, next) {
     res.status(err.status || 500);
     res.render('error');
 });
-exports.default = app;
+export default app;

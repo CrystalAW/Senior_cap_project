@@ -3,7 +3,7 @@ import { Router } from 'express';
 import jwt from 'jsonwebtoken';
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
-import User, { IUser } from '../models/user.model.ts';
+import User, { IUser } from '../models/user.model';
 dotenv.config();
 
 
