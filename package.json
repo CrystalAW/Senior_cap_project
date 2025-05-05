@@ -10,7 +10,7 @@
     "start:backend": "ts-node-esm ./src/bin/www",
     "start:frontend": "cd src/app_public/DigiP && npm start",
     "start:python": "python Algorithm/app.py",
-    "start:node": "node dist/bin/www.js"
+    "start:node": "echo 'STARTING NODE' && ls dist/bin && node dist/bin/www.js"
   },
   "engines": {
     "node": "18.x"
