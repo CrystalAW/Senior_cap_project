@@ -18,35 +18,25 @@ export class TasklistComponent {
   savedEndTime = '';
   totalTasks : Task[] = [];
 
-  //  taskBDTupleList: TaskBDTuple [] = this.pickedTasks.map(task => {
-  //   return [
-  //     {  id: task.id,
-  //       title: task.title,
-  //       notes: task.notes ?? '',
-  //       due: task.due,
-  //       status: task.status,
-  //       completed: task.completed,
-  //       updated: task.updated,
-  //       selfLink: task.selfLink,
-  //       parent: task.parent,
-  //       position: task.position
-  //     },
-  //     this.bdNumbers[task.id]
-  //   ]
-  // });
-
   constructor(private calendarService: GoogleCalendarService, private scheduleService: ScheduleService) {}
 
   ngOnInit(): void {
     this.refresh();
   }
 
+  /**
+   * refresharray of tasks
+   */
   refresh() {
     this.calendarService.getTaskfromLists('primary').subscribe((tasks: Task[]) => {
       this.todo = tasks.filter(task => task.status === 'needsAction');
     });
   }
 
+  /**
+   * select task for generated schedule breakdown
+   * @param event 
+   */
   selectTask (event: Event) {
     const selectElement = event.target as HTMLSelectElement;
     const selectedIds = Array.from(selectElement.selectedOptions).map(option => option.value);
@@ -57,7 +47,7 @@ export class TasklistComponent {
     this.bdNumbers = {};
     this.pickedTasks.forEach(task => {
       if (!this.bdNumbers[task.id]) {
-        this.bdNumbers[task.id] = 0; // default  number
+        this.bdNumbers[task.id] = 0;
       }
     });
   }
@@ -76,9 +66,10 @@ export class TasklistComponent {
     delete this.bdNumbers[taskId];
   }
 
+  /**
+   * collects google creds and task requirements needed to send over to python backend
+   */
   generate() {
-    
-
     const taskBDTupleList: TaskBDTuple [] = this.pickedTasks.map(task => {
       return [
         {  id: task.id,
@@ -128,11 +119,13 @@ export class TasklistComponent {
     this.refresh();
   }
   
-
+  /**
+   * resets generated schedule; clears out tasks
+   */
   reset() {
     this.scheduleService.getCredentials().subscribe(creds => {
       let endTimeISO: string;
-      
+      //checks to make sure there was a deadline for those generated tasks so they can be deleted
       if (this.savedEndTime) {
         const parsedDate = new Date(this.savedEndTime);
         if (!isNaN(parsedDate.getTime())) {
@@ -145,7 +138,7 @@ export class TasklistComponent {
         console.warn('No savedEndTime, using now instead');
         endTimeISO = new Date().toISOString();
       }
-  
+      // send the credentials and endTime back to backend
       const payload: any = {
         creds,
         endTime: endTimeISO,
@@ -153,7 +146,7 @@ export class TasklistComponent {
   
       console.log("payload", payload);
   
-      this.scheduleService.regenerateSchedule(payload).subscribe({
+      this.scheduleService.resetSchedule(payload).subscribe({
         next: (res) => {
           console.log('Schedule created:', res);
         },

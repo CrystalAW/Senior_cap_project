@@ -14,7 +14,6 @@ export class GoogleCalendarService {
   constructor(private http: HttpClient) { }
 
   getEvents(): Observable<any> {
-    // check in this file if there are recurring events and add a tag to them
     return this.http.get<any>(this.calUrl);
   }
 
@@ -22,8 +21,8 @@ export class GoogleCalendarService {
     return this.http.post<any>(this.calUrl, event);
   }
   
-  deleteEvent() {
-
+  deleteEvent(event: any) {
+    return this.http.delete<any>(this.calUrl, event);
   }
   
   //taskslists api methods

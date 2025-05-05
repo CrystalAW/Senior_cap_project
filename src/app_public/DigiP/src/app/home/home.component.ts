@@ -12,20 +12,7 @@ export class HomeComponent {
   constructor(private router: Router, private authService: AuthService, private route: ActivatedRoute) {}
 
   user = this.authService.getUser();
-  // ngOnInit() {
-  //   this.route.queryParams.subscribe(params => {
-  //     if (params['token'] && params['user']) {
-  //       const user = JSON.parse(params['user']);
-  //       const token = params['token'];
-        
-  //       // Now store the user and token in the AuthService
-  //       this.authService.setUser(user, token);
-        
-  //       // Navigate to the home page or wherever you want
-  //       this.router.navigate(['/']);
-  //     }
-  //   });
-  // }
+  //routes for the other pages
 
   goToCalendar() {
     this.router.navigate(['/calendar']);
@@ -39,10 +26,4 @@ export class HomeComponent {
     this.router.navigate(['/tasks']);
   }
 
-  toggleForm() {
-    this.visible = !this.visible;
-  }
-  handleFormSubmit(data: any) {
-    console.log('Form submitted:', data);
-  }
 }

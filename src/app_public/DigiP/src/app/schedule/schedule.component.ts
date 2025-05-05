@@ -20,7 +20,9 @@ export class ScheduleComponent {
   selectedDate: Date = new Date();
 
   constructor(private calService: GoogleCalendarService, private scheduleService: ScheduleService) {}
-
+  /**
+   * populate table/list with google events and tasks, sorted chronologically
+   */
   ngOnInit() {
     this.calService.getTaskfromLists('primary').subscribe(tasks => {
       this.tasks = tasks.map(task => ({ ...task, type: 'task' }));
@@ -35,12 +37,15 @@ export class ScheduleComponent {
       this.checkArrays();
     });
   }
-
+  /**
+   * updates combined array of tasks and events and filters them
+   */
   checkArrays() {
     this.updateCombArray();
       this.filterEvents();
       console.log("combined array:", this.filteredEvents);
   }
+
   updateCombArray() {
     this.combined = [...this.events, ...this.tasks];
 
@@ -51,7 +56,9 @@ export class ScheduleComponent {
     return aDate.getTime() - bDate.getTime();
   });
   }
-
+  /**
+   * filter events/tasks based on if user picks day, week, month view, etc.
+   */
   filterEvents() {
     const selected = new Date(this.selectedDate);
     selected.setHours(0, 0, 0, 0);
@@ -100,17 +107,27 @@ export class ScheduleComponent {
     });
   }
 
+  /**
+   * filter events/tasks based off custom date change
+   * @param event 
+   */
   onDateChange(event: Event) {
     const input = event.target as HTMLInputElement;
     this.selectedDate = new Date(input.value);
     this.filterEvents();
   }
   
-
+  
   toggleView(mode: 'table' | 'list') {
     this.viewMode = mode;
   }
 
+  /**
+   * change date display to be user friendly
+   * @param start 
+   * @param end 
+   * @returns 
+   */
   formatEventDate(start: string, end: string): string {
     const startDate = new Date(start);
     const endDate = new Date(end);
@@ -121,12 +138,19 @@ export class ScheduleComponent {
 
     return `${dateStr} ${formatTime(startDate)} - ${formatTime(endDate)}`;
   }
-
+  /**
+   * change date to be user friendly
+   * @param due 
+   * @returns 
+   */
   formatTaskDate(due: string): string {
     const date = new Date(due);
     return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear().toString().slice(-2)}`;
   }
 
+  /**
+   * format data to be exported to CSV file
+   */
   exportCSV() {
     const headers = ['Title', 'Date & Time', 'Description/Status'];
     const rows = this.filteredEvents.map(item => {
@@ -155,6 +179,9 @@ export class ScheduleComponent {
     document.body.removeChild(link);
   }
 
+   /**
+   * format data to be exported to PDF file
+   */
   exportToPDF(): void {
     const doc = new jsPDF();
     doc.setFontSize(18);

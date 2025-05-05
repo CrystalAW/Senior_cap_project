@@ -6,6 +6,12 @@ import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import User from '../models/user.model.ts';
 dotenv.config();
 const router = Router();
+
+/**
+ * Generate secret token for users.
+ * @param {*} user 
+ * @returns 
+ */
 const generateJWT = (user) => {
     const payload = {
         email: user.email,
@@ -21,24 +27,35 @@ const generateJWT = (user) => {
     };
     return jwt.sign(payload, secretKey, options);
 };
-// Middleware to check token
+
+/**
+ * Middleware to check if token is still valid.
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ * @returns 
+ */
 const authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
     if (!token) {
         console.log('Couldnt find token');
-        return res.sendStatus(401); // No token
+        return res.sendStatus(401);
     }
     jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
         if (err) {
             console.log('Invalid token', err);
-            return res.sendStatus(403); // Invalid token
+            return res.sendStatus(403);
         }
         req.user = user;
         next();
     });
 };
-// Passport setup
+
+/**
+ * Using passport to direct authorized users through google authentication and 
+ * to our homepage
+ */
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -71,10 +88,12 @@ passport.use(new GoogleStrategy({
         return done(error);
     }
 }));
+
 //get user google id
 passport.serializeUser((user, done) => {
     done(null, user.id);
 });
+
 //save user in database after end of session
 passport.deserializeUser(async (id, done) => {
     try {
@@ -85,18 +104,26 @@ passport.deserializeUser(async (id, done) => {
         done(err);
     }
 });
+
 router.get('/google', passport.authenticate('google', {
     scope: ['profile', 'email'],
 }));
+
 router.get('/google/callback', passport.authenticate('google', {
     failureRedirect: '/login?error=unauthorized'
 }), (req, res) => {
     const user = req.user;
     const token = generateJWT(user);
-    // res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');  // Frontend origin
-    // res.setHeader('Access-Control-Allow-Credentials', 'true');  // Allow credentials (cookies)
     res.redirect(`http://localhost:4200/login?token=${token}&user=${encodeURIComponent(JSON.stringify(user))}`);
 });
+
+/**
+ * Check if its an authorized user
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ * @returns 
+ */
 const checkUser = async (req, res, next) => {
     try {
         const user = await User.findById(req.user.id).select('-password'); // No password sent

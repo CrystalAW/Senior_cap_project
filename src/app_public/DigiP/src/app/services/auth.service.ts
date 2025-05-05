@@ -52,6 +52,10 @@ export class AuthService {
       localStorage.setItem(this.USER_KEY, JSON.stringify(user));  // Store user info in localStorage
     }
   
+    /**
+     * Checks tokens from url to see if its already stored
+     * @returns 
+     */
     checkLoggedInUser(): void {
         const token = localStorage.getItem(this.TOKEN_KEY);
         //error checking

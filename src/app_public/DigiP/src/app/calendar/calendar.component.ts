@@ -57,21 +57,21 @@ export class CalendarComponent {
   } | undefined;
 
   actions: CalendarEventAction[] = [
-    {
-      label: '<i class="fas fa-fw fa-pencil-alt"></i>',
-      a11yLabel: 'Edit',
-      onClick: ({ event }: { event: CalendarEvent }): void => {
-        this.handleEvent('Edited', event);
-      },
-    },
-    {
-      label: '<i class="fas fa-fw fa-trash-alt"></i>',
-      a11yLabel: 'Delete',
-      onClick: ({ event }: { event: CalendarEvent }): void => {
-        this.events = this.events.filter((iEvent) => iEvent !== event);
-        this.handleEvent('Deleted', event);
-      },
-    },
+    // {
+    //   label: '<i class="fas fa-fw fa-pencil-alt"></i>',
+    //   a11yLabel: 'Edit',
+    //   onClick: ({ event }: { event: CalendarEvent }): void => {
+    //     this.handleEvent('Edited', event);
+    //   },
+    // },
+    // {
+    //   label: '<i class="fas fa-fw fa-trash-alt"></i>',
+    //   a11yLabel: 'Delete',
+    //   onClick: ({ event }: { event: CalendarEvent }): void => {
+    //     this.events = this.events.filter((iEvent) => iEvent !== event);
+    //     this.handleEvent('Deleted', event);
+    //   },
+    // },
   ];
 
   refresh = new Subject<void>();
@@ -100,8 +100,11 @@ recurringEvents: RecurringEvent[] = [];
     });
   }
 
-  //from AC
-  //if day is clicked, activated the add event box
+  
+  /**
+   * from angular-cal pckge
+   * @param param0 
+   */
   dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
     if (isSameMonth(date, this.viewDate)) {
       if (
@@ -118,7 +121,11 @@ recurringEvents: RecurringEvent[] = [];
     this.showAddEventBox = true;
     this.newEventTitle = '';
   }
-// from AC
+
+  /**
+   * from angular-cal pckge
+   * @param param0 
+   */
   eventTimesChanged({
     event,
     newStart,
@@ -138,7 +145,7 @@ recurringEvents: RecurringEvent[] = [];
   }
 
   /**
-   * Obligatory doc: needs to be done by this weekend. 
+   *maps google-cal event info to match template on angular-cal pckge
    * @param googleEvent 
    * @returns 
    */
@@ -168,6 +175,11 @@ recurringEvents: RecurringEvent[] = [];
     };
   }
 
+  /**
+   * retrieve attendees field from google-event information array
+   * @param event 
+   * @returns 
+   */
   getAttendees(event?: CalendarEvent): string {
     const attendees = event?.meta?.attendees;
     if (!attendees || attendees.length === 0) {
@@ -176,12 +188,19 @@ recurringEvents: RecurringEvent[] = [];
     return attendees.map((a: { email: any; }) => a.email).join(', ');
   }
 
-  // this modal template is not working. I might have to do something else. 
+   /**
+   * from angular-cal pckge
+   * @param param0 
+   */
   handleEvent(action: string, event: CalendarEvent): void {
     this.modalData = { event, action };
     this.modal.open(this.modalContent, { size: 'lg' });
   }
 
+   /**
+   * from angular-cal pckge
+   * @param param0 
+   */
   addEvent(): void {
     if (this.clickedDate && this.newEventTitle.trim()) {
       this.events = [
@@ -205,7 +224,10 @@ recurringEvents: RecurringEvent[] = [];
   deleteEvent(eventToDelete: CalendarEvent) {
     this.events = this.events.filter((event) => event !== eventToDelete);
   }
-
+ /**
+   * from angular-cal pckge
+   * @param param0 
+   */
   updateCalendarEvents(viewRender: CalendarMonthViewBeforeRenderEvent): void {
     if (
       !this.viewPeriod ||
@@ -243,11 +265,13 @@ recurringEvents: RecurringEvent[] = [];
     }
   }
   
-
+  
+  //from angular-cal pckge
   setView(view: CalendarView) {
     this.view = view;
   }
 
+  //from angular-cal pckge
   closeOpenMonthViewDay() {
     this.activeDayIsOpen = false;
   }

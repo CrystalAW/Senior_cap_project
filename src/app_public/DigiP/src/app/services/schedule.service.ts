@@ -5,7 +5,6 @@ import { googleCreds, schedPayload } from '../models/creds.model';
 import { Task } from '../models/tasks.model';
 
 
-type TaskBDTuple = [Task, number];
 @Injectable({
   providedIn: 'root'
 })
@@ -16,10 +15,21 @@ export class ScheduleService {
 
   constructor(private http: HttpClient) { }
 
+  /**
+   * Schedule service to interact with Python backend API
+   * getCredentials : gets google credentials stored in Node backend.
+   * @returns 
+   */
   getCredentials(): Observable<any> {
       return this.http.get(this.credUrl);
   }
 
+  /**
+   * sends the user-picked tasks from Task page and their authorized credentials to 
+   * the python backend
+   * @param payload 
+   * @returns 
+   */
   generateSchedule(payload: schedPayload): Observable<any> {
     return this.http.get<googleCreds>(this.credUrl).pipe(
       map(creds => ({...payload, creds} as schedPayload)),
@@ -27,7 +37,12 @@ export class ScheduleService {
       );
   }
 
-  regenerateSchedule(payload: schedPayload): Observable<any> {
+  /**
+   * sends authorized credentials back to python backend to reset scedule
+   * @param payload 
+   * @returns 
+   */
+  resetSchedule(payload: schedPayload): Observable<any> {
     return this.http.get<googleCreds>(this.credUrl).pipe(
       map(creds => ({...payload, creds} as any)),
       switchMap(fullpayload => this.http.post<any>(`${this.pyUrl}/reset`, fullpayload))

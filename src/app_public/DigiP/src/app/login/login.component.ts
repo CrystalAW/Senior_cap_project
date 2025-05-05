@@ -12,7 +12,9 @@ export class LoginComponent {
     sign = true
 
     constructor(private authService: AuthService, private router: Router, private route: ActivatedRoute) {}
-
+    /**
+     * auto check if user is authorized
+     */
     ngOnInit() {
       this.route.queryParams.subscribe(params => {
         if (params['error'] === 'unauthorized') {
@@ -31,7 +33,9 @@ export class LoginComponent {
 
       
     }
-
+    /**
+     * calls google auth for login
+     */
     login() {
       this.authService.googleLogin();
     }
