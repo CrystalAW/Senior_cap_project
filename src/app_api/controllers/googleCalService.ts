@@ -2,7 +2,6 @@
 import { authenticate } from '@google-cloud/local-auth';
 import * as fs from 'fs/promises';
 import { Auth, calendar_v3, google } from 'googleapis';
-import { authorize } from 'passport';
 import * as path from 'path';
 import * as process from 'process';
 
@@ -87,16 +86,33 @@ export class GoogleCalendarService {
     return res.data.items ?? [];
   }
 
-  async createEvent(event: calendar_v3.Schema$Event): Promise<void> {
+  async createEvent(event: calendar_v3.Schema$Event): Promise<string> {
     const auth = await this.authorize();
     const calendar = google.calendar({ version: 'v3', auth });
-
-    const res = await calendar.events.insert({
+    console.log('Creating event with:', JSON.stringify(event, null, 2));
+    const response = await calendar.events.insert({
       calendarId: 'primary',
       requestBody: event,
     });
+    console.log('Event created:', response.data.htmlLink);
+    return response.data.id!;
+  }
 
-    console.log('Event created:', res.data.htmlLink);
+  async deleteEvent(eventId: string): Promise<void> {
+    const auth = await this.authorize();
+    const calendar = google.calendar({ version: 'v3', auth });
+    console.log('deleting event with:', eventId);
+      try {
+        const res = await calendar.events.delete({
+          calendarId: 'primary',
+          eventId: eventId,
+        });
+
+        console.log('Event deleted:', res.data);
+    } catch (err){
+      console.error('Error deleting event from Google Calendar:', err);
+      throw new Error('Failed to delete event from Google Calendar');
+    }
   }
 
 // Google Tasks integration
@@ -168,4 +184,3 @@ async deleteTask(taskListId:string, taskId: string) {
 }
 
 }
-

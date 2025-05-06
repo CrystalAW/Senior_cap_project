@@ -7,4 +7,7 @@ npm install at root directory
 cd src/app_public/DigiP and npm install
 
 # how to run
-npm start - will run all aspects concurrently
+npm start at root directory - will run all aspects concurrently
+
+# troubleshooting
+If there are any errors concerning src/app_public - specifically 'component not found/ standalone componenents, it helps to close the IDE and open it again. 

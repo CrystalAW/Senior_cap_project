@@ -76,6 +76,15 @@
       placeholder="Event title"
       class="event-input"
     />
+    <label>Start:
+      <input type="time"
+      [(ngModel)]="startEventdate">
+
+    </label>
+    <label>End:
+      <input type="time"
+      [(ngModel)]="endEventdate">
+    </label>
 
     <div class="event-box-buttons">
       <button class="btn btn-sm btn-success" (click)="addEvent()">Add</button>
@@ -93,7 +102,6 @@
       (dayClicked)="dayClicked($event.day)"
       (eventClicked)="handleEvent('Clicked', $event.event)"
       (eventTimesChanged)="eventTimesChanged($event)"
-      (beforeViewRender)="updateCalendarEvents($event)"
     >
     </mwl-calendar-month-view>
     <mwl-calendar-week-view
@@ -131,7 +139,7 @@
       <br>
       <!-- <pre>{{modalData?.event | json}}</pre> -->
       <button type="button" class="save" (click)="modal.close()">Save</button>
-      <button type="button" class="save" (click)="deleteEvent(modalData?.event)"></button>
+      <button type="button" class="save" (click)="deleteEvent(modalData?.event!)">Delete</button>
     </div>
   </ng-template>
 

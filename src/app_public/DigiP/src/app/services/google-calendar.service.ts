@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { CalendarEvent } from 'angular-calendar';
 import { Observable } from 'rxjs';
 import { TaskList } from '../models/tasklist.model';
 import { Task } from '../models/tasks.model';
@@ -17,12 +18,24 @@ export class GoogleCalendarService {
     return this.http.get<any>(this.calUrl);
   }
 
-  addEvent(event: any): Observable<any> {
-    return this.http.post<any>(this.calUrl, event);
+  addEvent(event: CalendarEvent<any>): Observable<any> {
+    const googleEvent = {
+      summary: event.title,
+      start: {
+        dateTime: event.start.toISOString(),
+        timeZone: 'America/New_York', 
+      },
+      end: {
+        dateTime: event.end!.toISOString(),
+        timeZone: 'America/New_York',
+      },
+    };
+    console.log("Creating event:", googleEvent);
+    return this.http.post<any>(this.calUrl, googleEvent);
   }
   
-  deleteEvent(event: any) {
-    return this.http.delete<any>(this.calUrl, event);
+  deleteEvent(eventId: string) {
+    return this.http.delete<any>(`${this.calUrl}/${eventId}`);
   }
   
   //taskslists api methods

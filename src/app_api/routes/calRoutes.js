@@ -22,4 +22,14 @@ router.post('/', express.json(), async (req, res) => {
         res.status(500).send('Failed to create event');
     }
 });
+router.delete('/:eventId', async (req, res) => {
+    const {eventId} = req.params;
+    try {
+      await calService.deleteEvent(eventId);
+    res.status(200).send('Event deleted successfully');
+    } catch (err) {
+      console.error('Error deleting event:', err);
+     res.status(500).send('Failed to delete event');
+    }
+  });
 export default router;

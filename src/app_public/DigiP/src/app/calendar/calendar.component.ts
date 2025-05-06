@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component, TemplateRef, ViewChild, } from '@angular/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { CalendarEvent, CalendarEventAction, CalendarEventTimesChangedEvent, CalendarMonthViewBeforeRenderEvent, CalendarView } from 'angular-calendar';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { CalendarEvent, CalendarEventTimesChangedEvent, CalendarView } from 'angular-calendar';
 import { EventColor, ViewPeriod } from 'calendar-utils';
-import { endOfDay, isSameDay, isSameMonth, startOfDay } from 'date-fns';
+import { isSameDay, isSameMonth } from 'date-fns';
 import moment from 'moment-timezone';
-import { RRule } from 'rrule';
 import { Subject } from 'rxjs';
 import { GoogleCalendarService } from '../services/google-calendar.service';
 
@@ -23,16 +22,6 @@ const colors: Record<string, EventColor> = {
   },
 };
 
-interface RecurringEvent {
-  title: string;
-  color: any;
-  rrule?: {
-    freq: any;
-    bymonth?: number;
-    bymonthday?: number;
-    byweekday?: any;
-  };
-}
 
 moment.tz.setDefault('Utc');
 
@@ -51,55 +40,40 @@ export class CalendarComponent {
 
   viewDate: Date =  moment().toDate();
 
+  activeModalRef: NgbModalRef | null = null
+
   modalData: {
     action: string;
     event: CalendarEvent;
   } | undefined;
-
-  actions: CalendarEventAction[] = [
-    // {
-    //   label: '<i class="fas fa-fw fa-pencil-alt"></i>',
-    //   a11yLabel: 'Edit',
-    //   onClick: ({ event }: { event: CalendarEvent }): void => {
-    //     this.handleEvent('Edited', event);
-    //   },
-    // },
-    // {
-    //   label: '<i class="fas fa-fw fa-trash-alt"></i>',
-    //   a11yLabel: 'Delete',
-    //   onClick: ({ event }: { event: CalendarEvent }): void => {
-    //     this.events = this.events.filter((iEvent) => iEvent !== event);
-    //     this.handleEvent('Deleted', event);
-    //   },
-    // },
-  ];
 
   refresh = new Subject<void>();
   clickedDate: Date | null = null;
   showAddEventBox = false;
   showEventDetails = false;
   newEventTitle = '';
+  startEventdate = '';
+  endEventdate = '';
   events: CalendarEvent[] = [];
-
   activeDayIsOpen: boolean = true;
-
-
   viewPeriod: ViewPeriod | undefined;
-
-recurringEvents: RecurringEvent[] = [];
 
 
   constructor(private modal: NgbModal, private calService: GoogleCalendarService) {}
 
   ngOnInit() {
     // pulls the events from google calendar
-    this.calService.getEvents().subscribe((googleEvents) => {
+    this.reload();
+  }
+
+  reload() {
+     // pulls the events from google calendar
+     this.calService.getEvents().subscribe((googleEvents) => {
       const mapped = googleEvents.map(this.mapGoogleToCalendarEvent);
       this.events = [...this.events, ...mapped];
       this.refresh.next(); 
     });
   }
-
   
   /**
    * from angular-cal pckge
@@ -194,7 +168,7 @@ recurringEvents: RecurringEvent[] = [];
    */
   handleEvent(action: string, event: CalendarEvent): void {
     this.modalData = { event, action };
-    this.modal.open(this.modalContent, { size: 'lg' });
+   this.activeModalRef = this.modal.open(this.modalContent, { size: 'lg' });
   }
 
    /**
@@ -203,65 +177,57 @@ recurringEvents: RecurringEvent[] = [];
    */
   addEvent(): void {
     if (this.clickedDate && this.newEventTitle.trim()) {
-      this.events = [
-        ...this.events,
-        {
-          title: this.newEventTitle,
-          start: startOfDay(this.clickedDate),
-          end: endOfDay(this.clickedDate),
-          color: colors['red'],
-          draggable: true,
-          resizable: {
-            beforeStart: true,
-            afterEnd: true,
-          },
+      const [startHour, startMin] = (this.startEventdate || '00:00').split(':').map(Number);
+      const [endHour, endMin] = (this.endEventdate || '23:59').split(':').map(Number);
+      const startTime = new Date(this.clickedDate);
+      startTime.setHours(startHour, startMin, 0, 0);
+      const endTime = new Date(this.clickedDate);
+      endTime.setHours(endHour, endMin);
+
+      const newEvent = {
+        title: this.newEventTitle,
+        start: startTime,
+        end: endTime,
+        color: colors['red'],
+        draggable: true,
+        resizable: {
+          beforeStart: true,
+          afterEnd: true,
         },
-      ];
+      };
+      this.events = [...this.events, newEvent];
       this.showAddEventBox = false;
+      this.calService.addEvent(newEvent).subscribe({
+        next: (response) => {
+          console.log('Event created:', response);
+          const newCalevent = this.mapGoogleToCalendarEvent(response);
+          this.events = [...this.events, newCalevent];
+        },
+        error: (err) => {
+          console.error('Error adding event:', err); 
+        },
+      });
     }
   }
 
-  deleteEvent(eventToDelete: CalendarEvent) {
-    this.events = this.events.filter((event) => event !== eventToDelete);
-  }
- /**
-   * from angular-cal pckge
-   * @param param0 
+  /**
+   * deletes from both website and google calendar
    */
-  updateCalendarEvents(viewRender: CalendarMonthViewBeforeRenderEvent): void {
-    if (
-      !this.viewPeriod ||
-      !moment(this.viewPeriod.start).isSame(viewRender.period.start) ||
-      !moment(this.viewPeriod.end).isSame(viewRender.period.end)
-    ) {
-      this.viewPeriod = viewRender.period;
-  
-      const newRecurringEvents: CalendarEvent[] = [];
-  
-      this.recurringEvents.forEach((event) => {
-        const rule = new RRule({
-          ...event.rrule,
-          dtstart: moment(viewRender.period.start).startOf('day').toDate(),
-          until: moment(viewRender.period.end).endOf('day').toDate(),
-        });
-  
-        rule.all().forEach((date) => {
-          newRecurringEvents.push({
-            title: event.title,
-            color: event.color,
-            start: moment(date).toDate(),
-            allDay: true,
-          });
-        });
+  deleteEvent(deletedEvent: CalendarEvent) {
+    this.events = this.events.filter((event) => event !== deletedEvent);
+    const delEventid = deletedEvent.meta?.googleId;
+    if (delEventid) {
+      this.calService.deleteEvent(delEventid).subscribe({
+        next: (response) => {
+          console.log('Event deleted:', response);
+            this.activeModalRef!.close();
+        },
+        error: (err) => {
+          console.error('Error deleting event:', err);
+        },
       });
-  
-      // Combine recurring + regular events
-      this.events = [
-        ...newRecurringEvents,
-        ...this.events.filter(e => !e.meta?.recurring), // Avoid duplicates
-      ];
-  
-      this.refresh.next();
+    } else {
+      console.error('No google Id found!')
     }
   }
   

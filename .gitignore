@@ -71,3 +71,5 @@ Thumbs.db
 .angular/
 dist/
 node_modules/
+
+generate.js

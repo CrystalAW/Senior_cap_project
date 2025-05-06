@@ -10,6 +10,7 @@ const SCOPES = [
 ];
 const TOKEN_PATH = path.join(process.cwd(), 'token.json');
 const CREDENTIALS_PATH = path.join(process.cwd(), 'credentials.json');
+
 export async function readSavedcreds() {
     const cred = await fs.readFile(TOKEN_PATH, 'utf8');
     return JSON.parse(cred);
@@ -82,6 +83,25 @@ export class GoogleCalendarService {
         });
         console.log('Event created:', res.data.htmlLink);
     }
+
+     async deleteEvent(eventId) {
+        const auth = await this.authorize();
+        const calendar = google.calendar({ version: 'v3', auth });
+        console.log('deleting event with:', eventId);
+          try {
+            const res = await calendar.events.delete({
+              calendarId: 'primary',
+              eventId: eventId,
+            });
+    
+            console.log('Event deleted:', res.data);
+        } catch (err){
+          console.error('Error deleting event from Google Calendar:', err);
+          throw new Error('Failed to delete event from Google Calendar');
+        }
+      }
+
+
     // Google Tasks integration
     async listTaskLists() {
         const auth = await this.authorize();
